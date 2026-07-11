@@ -34,9 +34,13 @@ export default function ExpenseForm({
   const [error, setError] = useState<string | null>(null);
 
   function toggleParticipant(id: PersonId) {
-    setParticipants((prev) =>
-      prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id],
-    );
+    setParticipants((prev) => {
+      if (prev.includes(id)) {
+        if (prev.length <= 2) return prev; // must keep at least 2 people
+        return prev.filter((p) => p !== id);
+      }
+      return [...prev, id];
+    });
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -52,8 +56,8 @@ export default function ExpenseForm({
       setError("Amount must be greater than 0");
       return;
     }
-    if (participants.length === 0) {
-      setError("Pick at least one person to split with");
+    if (participants.length < 2) {
+      setError("Pick 2 or 3 people to split with");
       return;
     }
 
@@ -151,7 +155,7 @@ export default function ExpenseForm({
 
       <div>
         <label className="mb-1 block text-xs font-medium text-slate-500">
-          Split between
+          Split between (pick 2 or 3)
         </label>
         <div className="flex gap-2">
           {PEOPLE.map((p) => (
