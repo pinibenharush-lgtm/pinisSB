@@ -47,7 +47,9 @@ export default function ExpenseList({
                   {personName(expense.paid_by)}
                 </span>{" "}
                 &middot; split{" "}
-                {expense.participants.map((p) => personName(p)).join(", ")}
+                {expense.split_mode === "couple"
+                  ? "Pini / Sean+Ori"
+                  : "3 ways"}
               </p>
             </div>
             <p className="shrink-0 font-bold text-slate-800">

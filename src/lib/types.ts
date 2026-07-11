@@ -10,6 +10,10 @@ export function personName(id: string | null | undefined): string {
   return PEOPLE.find((p) => p.id === id)?.name ?? id ?? "Unknown";
 }
 
+/** "three_way": split evenly between Pini, Sean and Ori.
+ *  "couple": split between two pockets — Pini, and Sean+Ori combined. */
+export type SplitMode = "three_way" | "couple";
+
 export type Expense = {
   id: string;
   description: string;
@@ -17,6 +21,7 @@ export type Expense = {
   currency: string;
   paid_by: PersonId;
   participants: PersonId[];
+  split_mode: SplitMode;
   expense_date: string;
   created_at: string;
 };

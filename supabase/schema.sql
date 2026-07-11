@@ -26,6 +26,7 @@ create table expenses (
   currency text not null default 'EUR',
   paid_by text not null references people(id),
   participants text[] not null,
+  split_mode text not null default 'three_way' check (split_mode in ('three_way', 'couple')),
   expense_date date not null default current_date,
   created_at timestamptz not null default now()
 );

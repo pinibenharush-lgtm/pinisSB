@@ -8,10 +8,27 @@ export function computeBalances(expenses: Expense[]): Record<PersonId, number> {
   >;
 
   for (const expense of expenses) {
-    const share = expense.amount / expense.participants.length;
-    balances[expense.paid_by] += expense.amount;
-    for (const participant of expense.participants) {
-      balances[participant] -= share;
+    const amount = expense.amount;
+
+    if (expense.split_mode === "couple") {
+      // Two pockets: Pini, and Sean+Ori combined. Whichever of Sean/Ori
+      // actually paid, the credit is shared evenly across the couple's
+      // pocket so no debt is implied between Sean and Ori themselves.
+      if (expense.paid_by === "pini") {
+        balances.pini += amount;
+      } else {
+        balances.sean += amount / 2;
+        balances.ori += amount / 2;
+      }
+      balances.pini -= amount / 2;
+      balances.sean -= amount / 4;
+      balances.ori -= amount / 4;
+    } else {
+      const share = amount / 3;
+      balances[expense.paid_by] += amount;
+      balances.pini -= share;
+      balances.sean -= share;
+      balances.ori -= share;
     }
   }
 

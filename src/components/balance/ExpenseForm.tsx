@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useIdentity } from "@/lib/identity";
-import { Expense, PEOPLE, PersonId } from "@/lib/types";
+import { Expense, PEOPLE, PersonId, SplitMode } from "@/lib/types";
 
 const ALL_IDS = PEOPLE.map((p) => p.id);
 
@@ -26,22 +26,12 @@ export default function ExpenseForm({
   const [paidBy, setPaidBy] = useState<PersonId>(
     editing?.paid_by ?? me ?? "pini",
   );
-  const [participants, setParticipants] = useState<PersonId[]>(
-    editing?.participants ?? ALL_IDS,
+  const [splitMode, setSplitMode] = useState<SplitMode>(
+    editing?.split_mode ?? "three_way",
   );
   const [date, setDate] = useState(editing?.expense_date ?? todayISO());
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  function toggleParticipant(id: PersonId) {
-    setParticipants((prev) => {
-      if (prev.includes(id)) {
-        if (prev.length <= 2) return prev; // must keep at least 2 people
-        return prev.filter((p) => p !== id);
-      }
-      return [...prev, id];
-    });
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -56,18 +46,14 @@ export default function ExpenseForm({
       setError("Amount must be greater than 0");
       return;
     }
-    if (participants.length < 2) {
-      setError("Pick 2 or 3 people to split with");
-      return;
-    }
-
     setSaving(true);
     const payload = {
       description: description.trim(),
       amount: parsedAmount,
       currency: "EUR",
       paid_by: paidBy,
-      participants,
+      participants: ALL_IDS,
+      split_mode: splitMode,
       expense_date: date,
     };
 
@@ -155,33 +141,47 @@ export default function ExpenseForm({
 
       <div>
         <label className="mb-1 block text-xs font-medium text-slate-500">
-          Split between (pick 2 or 3)
+          Split
         </label>
         <div className="flex gap-2">
-          {PEOPLE.map((p) => (
-            <button
-              type="button"
-              key={p.id}
-              onClick={() => toggleParticipant(p.id)}
-              className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium ${
-                participants.includes(p.id)
-                  ? "border-cyan-600 bg-cyan-50 text-cyan-700"
-                  : "border-slate-300 text-slate-400"
-              }`}
-            >
-              {p.name}
-            </button>
-          ))}
+          <button
+            type="button"
+            onClick={() => setSplitMode("three_way")}
+            className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium ${
+              splitMode === "three_way"
+                ? "border-cyan-600 bg-cyan-50 text-cyan-700"
+                : "border-slate-300 text-slate-400"
+            }`}
+          >
+            3 ways
+          </button>
+          <button
+            type="button"
+            onClick={() => setSplitMode("couple")}
+            className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium ${
+              splitMode === "couple"
+                ? "border-cyan-600 bg-cyan-50 text-cyan-700"
+                : "border-slate-300 text-slate-400"
+            }`}
+          >
+            2 ways
+          </button>
         </div>
-        {participants.length > 0 && (
-          <p className="mt-1 text-xs text-slate-400">
-            €
-            {amount && !isNaN(parseFloat(amount))
-              ? (parseFloat(amount) / participants.length).toFixed(2)
-              : "0.00"}{" "}
-            each
-          </p>
-        )}
+        <p className="mt-1 text-xs text-slate-400">
+          {splitMode === "three_way"
+            ? "Split evenly between Pini, Sean and Ori"
+            : "Split between Pini and Sean+Ori together"}
+          {amount && !isNaN(parseFloat(amount)) && (
+            <>
+              {" "}
+              &middot; €
+              {(
+                parseFloat(amount) / (splitMode === "three_way" ? 3 : 2)
+              ).toFixed(2)}{" "}
+              {splitMode === "three_way" ? "each" : "per side"}
+            </>
+          )}
+        </p>
       </div>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
