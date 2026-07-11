@@ -1,22 +1,22 @@
-import { computeBalances, computeSettlements } from "@/lib/balance";
-import { Expense, PEOPLE, personName } from "@/lib/types";
+import { computePocketBalances, computeSettlements, POCKETS } from "@/lib/balance";
+import { Expense } from "@/lib/types";
 
 export default function BalanceSummary({ expenses }: { expenses: Expense[] }) {
-  const balances = computeBalances(expenses);
+  const balances = computePocketBalances(expenses);
   const settlements = computeSettlements(balances);
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="grid grid-cols-3 gap-2">
-        {PEOPLE.map((p) => {
-          const amount = balances[p.id];
+      <div className="grid grid-cols-2 gap-2">
+        {POCKETS.map((pocket) => {
+          const amount = balances[pocket.id];
           const isEven = Math.abs(amount) < 0.005;
           return (
             <div
-              key={p.id}
+              key={pocket.id}
               className="rounded-xl border border-slate-200 bg-white p-3 text-center shadow-sm"
             >
-              <p className="text-xs font-medium text-slate-500">{p.name}</p>
+              <p className="text-xs font-medium text-slate-500">{pocket.name}</p>
               <p
                 className={`mt-1 text-lg font-bold ${
                   isEven
@@ -48,11 +48,11 @@ export default function BalanceSummary({ expenses }: { expenses: Expense[] }) {
               <li key={i} className="flex items-center justify-between text-sm">
                 <span>
                   <span className="font-semibold text-slate-700">
-                    {personName(s.from)}
+                    {POCKETS.find((p) => p.id === s.from)?.name}
                   </span>{" "}
                   <span className="text-slate-400">pays</span>{" "}
                   <span className="font-semibold text-slate-700">
-                    {personName(s.to)}
+                    {POCKETS.find((p) => p.id === s.to)?.name}
                   </span>
                 </span>
                 <span className="font-bold text-cyan-700">
