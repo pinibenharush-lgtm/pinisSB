@@ -3,12 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { personName, PersonId } from "@/lib/types";
-
-const TABS = [
-  { href: "/", label: "Balance", icon: "💰" },
-  { href: "/places", label: "Places", icon: "📍" },
-  { href: "/checklist", label: "Checklist", icon: "✅" },
-];
+import { TABS } from "@/lib/nav";
 
 export default function Sidebar({
   me,

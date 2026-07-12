@@ -5,6 +5,8 @@ A small shared web app for Pini, Sean & Ori's trip to Crete:
 - **Balance** — log shared expenses (split 2-way between Pini and Sean+Ori, or 3-way evenly), see who owes who.
 - **Places** — add places you want to visit, rate them, comment, search them on a free map, and check the straight-line distance between any two.
 - **Checklist** — a shared to-do list (passports, etc.) you can all tick off.
+- **Game** — a daily logic puzzle (like LinkedIn's "Tango"), the same one for
+  all three of you each day, with shared results and streaks.
 
 No accounts or passwords: you just pick your name once on your phone and the
 app remembers you. All three of you see the same live data.
@@ -74,6 +76,10 @@ Open [http://localhost:3000](http://localhost:3000).
   and lets you check the straight-line distance between any two places.
 - **Checklist**: a flat shared list — anyone can add, check off, or delete
   items; it shows who added or checked each one.
+- **Game**: a fresh 6x6 sun/moon logic puzzle every day, generated from
+  the date itself (no external puzzle source, so it never runs out and
+  needs no admin work). Everyone gets the exact same puzzle; results
+  (solve time) and streaks are shared.
 
 There's no login system — identity is just "which name did you tap" stored
 on your own device, and the database is open to anyone with the app's link.

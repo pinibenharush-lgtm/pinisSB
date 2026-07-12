@@ -2,12 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-const TABS = [
-  { href: "/", label: "Balance", icon: "💰" },
-  { href: "/places", label: "Places", icon: "📍" },
-  { href: "/checklist", label: "Checklist", icon: "✅" },
-];
+import { TABS } from "@/lib/nav";
 
 export default function BottomNav() {
   const pathname = usePathname();

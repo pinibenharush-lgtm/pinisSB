@@ -61,3 +61,11 @@ export type ChecklistItem = {
   created_by: PersonId | null;
   created_at: string;
 };
+
+export type GameResult = {
+  id: string;
+  game_date: string;
+  person_id: PersonId;
+  seconds: number;
+  created_at: string;
+};

@@ -2,6 +2,7 @@
 -- Run this once in your Supabase project's SQL Editor (Supabase dashboard -> SQL Editor -> New query).
 -- Safe to re-run: it drops and recreates the app's tables.
 
+drop table if exists game_results cascade;
 drop table if exists checklist_items cascade;
 drop table if exists place_comments cascade;
 drop table if exists place_ratings cascade;
@@ -68,6 +69,15 @@ create table checklist_items (
   created_at timestamptz not null default now()
 );
 
+create table game_results (
+  id uuid primary key default gen_random_uuid(),
+  game_date date not null,
+  person_id text not null references people(id),
+  seconds int not null check (seconds > 0),
+  created_at timestamptz not null default now(),
+  unique (game_date, person_id)
+);
+
 -- Row Level Security
 -- This app has no login system (the 3 of you just pick your name in the UI),
 -- so access control relies on the Supabase URL + anon key not being shared publicly.
@@ -78,6 +88,7 @@ alter table places enable row level security;
 alter table place_ratings enable row level security;
 alter table place_comments enable row level security;
 alter table checklist_items enable row level security;
+alter table game_results enable row level security;
 
 create policy "allow all - people" on people for select using (true);
 
@@ -86,6 +97,7 @@ create policy "allow all - places" on places for all using (true) with check (tr
 create policy "allow all - place_ratings" on place_ratings for all using (true) with check (true);
 create policy "allow all - place_comments" on place_comments for all using (true) with check (true);
 create policy "allow all - checklist_items" on checklist_items for all using (true) with check (true);
+create policy "allow all - game_results" on game_results for all using (true) with check (true);
 
 -- Realtime: let the app subscribe to live changes so all 3 phones stay in sync.
 alter publication supabase_realtime add table expenses;
@@ -93,3 +105,4 @@ alter publication supabase_realtime add table places;
 alter publication supabase_realtime add table place_ratings;
 alter publication supabase_realtime add table place_comments;
 alter publication supabase_realtime add table checklist_items;
+alter publication supabase_realtime add table game_results;
