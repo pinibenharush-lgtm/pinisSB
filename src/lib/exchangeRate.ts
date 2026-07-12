@@ -13,6 +13,7 @@ type CachedRate = { rate: number; fetchedAt: number };
 export function useEurToIlsRate() {
   const [rate, setRate] = useState<number>(FALLBACK_RATE);
   const [isLive, setIsLive] = useState(false);
+  const [updatedAt, setUpdatedAt] = useState<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -26,6 +27,7 @@ export function useEurToIlsRate() {
           // eslint-disable-next-line react-hooks/set-state-in-effect -- reading cached rate on mount
           setRate(cached.rate);
           setIsLive(true);
+          setUpdatedAt(cached.fetchedAt);
           haveValue = true;
         }
       } catch {
@@ -39,21 +41,25 @@ export function useEurToIlsRate() {
         if (cancelled) return;
         const live = data?.rates?.ILS;
         if (typeof live === "number") {
+          const fetchedAt = Date.now();
           setRate(live);
           setIsLive(true);
+          setUpdatedAt(fetchedAt);
           window.localStorage.setItem(
             CACHE_KEY,
-            JSON.stringify({ rate: live, fetchedAt: Date.now() } satisfies CachedRate),
+            JSON.stringify({ rate: live, fetchedAt } satisfies CachedRate),
           );
         } else if (!haveValue) {
           setRate(FALLBACK_RATE);
           setIsLive(false);
+          setUpdatedAt(null);
         }
       })
       .catch(() => {
         if (!cancelled && !haveValue) {
           setRate(FALLBACK_RATE);
           setIsLive(false);
+          setUpdatedAt(null);
         }
       });
 
@@ -62,9 +68,21 @@ export function useEurToIlsRate() {
     };
   }, []);
 
-  return { rate, isLive };
+  return { rate, isLive, updatedAt };
 }
 
 export function formatILS(amountEur: number, rate: number): string {
-  return `₪${(amountEur * rate).toFixed(0)}`;
+  return `₪${(amountEur * rate).toFixed(2)}`;
+}
+
+/** Short relative time like "just now", "3h ago", "2d ago". */
+export function formatRelativeTime(timestamp: number): string {
+  const diffMs = Date.now() - timestamp;
+  const minutes = Math.floor(diffMs / 60000);
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
 }

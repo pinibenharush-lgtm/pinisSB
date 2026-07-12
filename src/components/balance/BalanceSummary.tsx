@@ -2,17 +2,20 @@
 
 import { computePocketBalances, computeSettlements, POCKETS } from "@/lib/balance";
 import { Expense } from "@/lib/types";
-import { formatILS, useEurToIlsRate } from "@/lib/exchangeRate";
+import { formatILS, formatRelativeTime, useEurToIlsRate } from "@/lib/exchangeRate";
 
 export default function BalanceSummary({ expenses }: { expenses: Expense[] }) {
   const balances = computePocketBalances(expenses);
   const settlements = computeSettlements(balances);
-  const { rate, isLive } = useEurToIlsRate();
+  const { rate, isLive, updatedAt } = useEurToIlsRate();
 
   return (
     <div className="flex flex-col gap-3">
       <p className="text-center text-[11px] text-slate-400">
-        1 € ≈ {formatILS(1, rate)} {isLive ? "" : "(approx.)"}
+        1 € ≈ {formatILS(1, rate)}{" "}
+        {isLive && updatedAt
+          ? `(updated ${formatRelativeTime(updatedAt)})`
+          : "(approx. rate)"}
       </p>
 
       <div className="grid grid-cols-2 gap-2">
