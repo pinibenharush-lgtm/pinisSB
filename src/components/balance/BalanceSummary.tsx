@@ -1,12 +1,20 @@
+"use client";
+
 import { computePocketBalances, computeSettlements, POCKETS } from "@/lib/balance";
 import { Expense } from "@/lib/types";
+import { formatILS, useEurToIlsRate } from "@/lib/exchangeRate";
 
 export default function BalanceSummary({ expenses }: { expenses: Expense[] }) {
   const balances = computePocketBalances(expenses);
   const settlements = computeSettlements(balances);
+  const { rate, isLive } = useEurToIlsRate();
 
   return (
     <div className="flex flex-col gap-3">
+      <p className="text-center text-[11px] text-slate-400">
+        1 € ≈ {formatILS(1, rate)} {isLive ? "" : "(approx.)"}
+      </p>
+
       <div className="grid grid-cols-2 gap-2">
         {POCKETS.map((pocket) => {
           const amount = balances[pocket.id];
@@ -28,6 +36,12 @@ export default function BalanceSummary({ expenses }: { expenses: Expense[] }) {
               >
                 {isEven ? "€0" : `${amount > 0 ? "+" : "-"}€${Math.abs(amount).toFixed(2)}`}
               </p>
+              {!isEven && (
+                <p className="text-[11px] text-slate-400">
+                  {amount > 0 ? "+" : "-"}
+                  {formatILS(Math.abs(amount), rate)}
+                </p>
+              )}
               <p className="text-[10px] text-slate-400">
                 {isEven ? "settled up" : amount > 0 ? "is owed" : "owes"}
               </p>
@@ -55,8 +69,13 @@ export default function BalanceSummary({ expenses }: { expenses: Expense[] }) {
                     {POCKETS.find((p) => p.id === s.to)?.name}
                   </span>
                 </span>
-                <span className="font-bold text-aegean-700">
-                  €{s.amount.toFixed(2)}
+                <span className="text-right">
+                  <span className="block font-bold text-aegean-700">
+                    €{s.amount.toFixed(2)}
+                  </span>
+                  <span className="block text-[11px] font-normal text-slate-400">
+                    {formatILS(s.amount, rate)}
+                  </span>
                 </span>
               </li>
             ))}
