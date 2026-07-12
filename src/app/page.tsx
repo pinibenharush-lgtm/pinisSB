@@ -39,7 +39,7 @@ export default function BalancePage() {
       ) : (
         <button
           onClick={openAdd}
-          className="rounded-xl bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm"
+          className="rounded-xl bg-aegean-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm"
         >
           + Add expense
         </button>

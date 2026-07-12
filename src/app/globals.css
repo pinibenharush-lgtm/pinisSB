@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+/* Greek flag blue / Cycladic white palette */
+@theme {
+  --color-aegean-50: #eef6fd;
+  --color-aegean-100: #d9ecfa;
+  --color-aegean-200: #b3d9f5;
+  --color-aegean-300: #7fc0ed;
+  --color-aegean-400: #45a1e0;
+  --color-aegean-500: #1c84cf;
+  --color-aegean-600: #0d5eaf;
+  --color-aegean-700: #0a4c8c;
+  --color-aegean-800: #0a3f70;
+  --color-aegean-900: #0c355c;
+}
+
 :root {
   color-scheme: light;
 }

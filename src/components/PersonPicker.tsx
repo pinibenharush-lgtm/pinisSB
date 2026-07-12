@@ -9,7 +9,7 @@ export default function PersonPicker() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-6 p-6 text-center">
       <div>
-        <h1 className="text-2xl font-bold text-cyan-700">Crete Trip 🇬🇷</h1>
+        <h1 className="text-2xl font-bold text-aegean-700">Crete Trip 🇬🇷</h1>
         <p className="mt-1 text-slate-500">Who&apos;s using the app?</p>
       </div>
       <div className="flex w-full max-w-xs flex-col gap-3">
@@ -17,7 +17,7 @@ export default function PersonPicker() {
           <button
             key={p.id}
             onClick={() => setMe(p.id)}
-            className="w-full rounded-xl bg-cyan-600 px-6 py-4 text-lg font-semibold text-white shadow-sm active:scale-[0.98] transition"
+            className="w-full rounded-xl bg-aegean-600 px-6 py-4 text-lg font-semibold text-white shadow-sm active:scale-[0.98] transition"
           >
             {p.name}
           </button>

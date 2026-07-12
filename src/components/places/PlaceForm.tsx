@@ -41,7 +41,7 @@ export default function PlaceForm({ onDone }: { onDone: () => void }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+      className="flex flex-col gap-3 rounded-xl border border-aegean-100 bg-white p-4 shadow-sm"
     >
       <div>
         <label className="mb-1 block text-xs font-medium text-slate-500">
@@ -84,7 +84,7 @@ export default function PlaceForm({ onDone }: { onDone: () => void }) {
         <button
           type="submit"
           disabled={saving}
-          className="flex-1 rounded-lg bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
+          className="flex-1 rounded-lg bg-aegean-600 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
         >
           {saving ? "Saving..." : "Add place"}
         </button>

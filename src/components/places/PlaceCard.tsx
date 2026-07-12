@@ -59,7 +59,7 @@ export default function PlaceCard({
   }
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <div className="rounded-xl border border-aegean-100 bg-white p-4 shadow-sm">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="truncate font-semibold text-slate-800">{place.name}</p>
@@ -68,7 +68,7 @@ export default function PlaceCard({
               href={place.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-cyan-700 underline"
+              className="text-xs text-aegean-700 underline"
             >
               Open link
             </a>
@@ -99,7 +99,7 @@ export default function PlaceCard({
         </div>
         <button
           onClick={() => setShowComments((s) => !s)}
-          className="text-xs font-medium text-cyan-700"
+          className="text-xs font-medium text-aegean-700"
         >
           {comments.length} comment{comments.length === 1 ? "" : "s"}
         </button>
@@ -132,7 +132,7 @@ export default function PlaceCard({
             />
             <button
               type="submit"
-              className="rounded-lg bg-cyan-600 px-3 py-1.5 text-xs font-semibold text-white"
+              className="rounded-lg bg-aegean-600 px-3 py-1.5 text-xs font-semibold text-white"
             >
               Send
             </button>

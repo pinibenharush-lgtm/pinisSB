@@ -56,7 +56,7 @@ export default function ChecklistPage() {
         />
         <button
           type="submit"
-          className="rounded-lg bg-cyan-600 px-4 py-2 text-sm font-semibold text-white"
+          className="rounded-lg bg-aegean-600 px-4 py-2 text-sm font-semibold text-white"
         >
           Add
         </button>
@@ -73,13 +73,13 @@ export default function ChecklistPage() {
           {sorted.map((item) => (
             <li
               key={item.id}
-              className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
+              className="flex items-center gap-3 rounded-xl border border-aegean-100 bg-white p-3 shadow-sm"
             >
               <button
                 onClick={() => toggleDone(item)}
                 className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-xs ${
                   item.done
-                    ? "border-cyan-600 bg-cyan-600 text-white"
+                    ? "border-aegean-600 bg-aegean-600 text-white"
                     : "border-slate-300 text-transparent"
                 }`}
               >

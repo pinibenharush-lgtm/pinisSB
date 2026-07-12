@@ -34,7 +34,7 @@ export default function ExpenseList({
       {sorted.map((expense) => (
         <li
           key={expense.id}
-          className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
+          className="rounded-xl border border-aegean-100 bg-white p-3 shadow-sm"
         >
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
@@ -59,7 +59,7 @@ export default function ExpenseList({
           <div className="mt-2 flex gap-3">
             <button
               onClick={() => onEdit(expense)}
-              className="text-xs font-medium text-cyan-700"
+              className="text-xs font-medium text-aegean-700"
             >
               Edit
             </button>

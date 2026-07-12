@@ -74,7 +74,7 @@ export default function ExpenseForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+      className="flex flex-col gap-3 rounded-xl border border-aegean-100 bg-white p-4 shadow-sm"
     >
       <div>
         <label className="mb-1 block text-xs font-medium text-slate-500">
@@ -129,7 +129,7 @@ export default function ExpenseForm({
               onClick={() => setPaidBy(p.id)}
               className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium ${
                 paidBy === p.id
-                  ? "border-cyan-600 bg-cyan-600 text-white"
+                  ? "border-aegean-600 bg-aegean-600 text-white"
                   : "border-slate-300 text-slate-600"
               }`}
             >
@@ -149,7 +149,7 @@ export default function ExpenseForm({
             onClick={() => setSplitMode("three_way")}
             className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium ${
               splitMode === "three_way"
-                ? "border-cyan-600 bg-cyan-50 text-cyan-700"
+                ? "border-aegean-600 bg-aegean-50 text-aegean-700"
                 : "border-slate-300 text-slate-400"
             }`}
           >
@@ -160,7 +160,7 @@ export default function ExpenseForm({
             onClick={() => setSplitMode("couple")}
             className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium ${
               splitMode === "couple"
-                ? "border-cyan-600 bg-cyan-50 text-cyan-700"
+                ? "border-aegean-600 bg-aegean-50 text-aegean-700"
                 : "border-slate-300 text-slate-400"
             }`}
           >
@@ -190,7 +190,7 @@ export default function ExpenseForm({
         <button
           type="submit"
           disabled={saving}
-          className="flex-1 rounded-lg bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
+          className="flex-1 rounded-lg bg-aegean-600 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
         >
           {saving ? "Saving..." : editing ? "Save changes" : "Add expense"}
         </button>
