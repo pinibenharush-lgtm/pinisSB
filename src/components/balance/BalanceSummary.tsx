@@ -7,15 +7,16 @@ import { formatILS, formatRelativeTime, useEurToIlsRate } from "@/lib/exchangeRa
 export default function BalanceSummary({ expenses }: { expenses: Expense[] }) {
   const balances = computePocketBalances(expenses);
   const settlements = computeSettlements(balances);
-  const { rate, isLive, updatedAt } = useEurToIlsRate();
+  const { rate, updatedAt, unavailable } = useEurToIlsRate();
 
   return (
     <div className="flex flex-col gap-3">
       <p className="text-center text-[11px] text-slate-400">
-        1 € ≈ {formatILS(1, rate)}{" "}
-        {isLive && updatedAt
-          ? `(updated ${formatRelativeTime(updatedAt)})`
-          : "(approx. rate)"}
+        {rate != null
+          ? `1 € ≈ ${formatILS(1, rate)} (rate updated ${formatRelativeTime(updatedAt!)})`
+          : unavailable
+            ? "Exchange rate unavailable right now"
+            : "Loading exchange rate…"}
       </p>
 
       <div className="grid grid-cols-2 gap-2">
@@ -39,7 +40,7 @@ export default function BalanceSummary({ expenses }: { expenses: Expense[] }) {
               >
                 {isEven ? "€0" : `${amount > 0 ? "+" : "-"}€${Math.abs(amount).toFixed(2)}`}
               </p>
-              {!isEven && (
+              {!isEven && rate != null && (
                 <p className="text-[11px] text-slate-400">
                   {amount > 0 ? "+" : "-"}
                   {formatILS(Math.abs(amount), rate)}
@@ -76,9 +77,11 @@ export default function BalanceSummary({ expenses }: { expenses: Expense[] }) {
                   <span className="block font-bold text-aegean-700">
                     €{s.amount.toFixed(2)}
                   </span>
-                  <span className="block text-[11px] font-normal text-slate-400">
-                    {formatILS(s.amount, rate)}
-                  </span>
+                  {rate != null && (
+                    <span className="block text-[11px] font-normal text-slate-400">
+                      {formatILS(s.amount, rate)}
+                    </span>
+                  )}
                 </span>
               </li>
             ))}

@@ -4,20 +4,35 @@ import { useEffect, useState } from "react";
 
 const CACHE_KEY = "crete-trip-eur-ils-rate";
 const CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12 hours
-// Approximate fallback, only used if we can't reach the live rate at all.
-const FALLBACK_RATE = 3.95;
 
 type CachedRate = { rate: number; fetchedAt: number };
 
-/** EUR -> ILS rate, refreshed from a free no-key API and cached locally. */
+async function fetchFromFrankfurter(): Promise<number | null> {
+  const res = await fetch("https://api.frankfurter.app/latest?from=EUR&to=ILS");
+  if (!res.ok) return null;
+  const data = await res.json();
+  const rate = data?.rates?.ILS;
+  return typeof rate === "number" ? rate : null;
+}
+
+async function fetchFromErApi(): Promise<number | null> {
+  const res = await fetch("https://open.er-api.com/v6/latest/EUR");
+  if (!res.ok) return null;
+  const data = await res.json();
+  const rate = data?.rates?.ILS;
+  return typeof rate === "number" ? rate : null;
+}
+
+/** EUR -> ILS rate, tried against two independent free no-key sources
+ * (ECB via frankfurter.app, then open.er-api.com) and cached locally.
+ * Never fabricates a number: if both sources fail, rate is null. */
 export function useEurToIlsRate() {
-  const [rate, setRate] = useState<number>(FALLBACK_RATE);
-  const [isLive, setIsLive] = useState(false);
+  const [rate, setRate] = useState<number | null>(null);
   const [updatedAt, setUpdatedAt] = useState<number | null>(null);
+  const [unavailable, setUnavailable] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    let haveValue = false;
 
     const cachedRaw = window.localStorage.getItem(CACHE_KEY);
     if (cachedRaw) {
@@ -26,49 +41,50 @@ export function useEurToIlsRate() {
         if (Date.now() - cached.fetchedAt < CACHE_TTL_MS) {
           // eslint-disable-next-line react-hooks/set-state-in-effect -- reading cached rate on mount
           setRate(cached.rate);
-          setIsLive(true);
           setUpdatedAt(cached.fetchedAt);
-          haveValue = true;
         }
       } catch {
         // ignore malformed cache
       }
     }
 
-    fetch("https://api.frankfurter.app/latest?from=EUR&to=ILS")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (cancelled) return;
-        const live = data?.rates?.ILS;
-        if (typeof live === "number") {
-          const fetchedAt = Date.now();
-          setRate(live);
-          setIsLive(true);
-          setUpdatedAt(fetchedAt);
-          window.localStorage.setItem(
-            CACHE_KEY,
-            JSON.stringify({ rate: live, fetchedAt } satisfies CachedRate),
-          );
-        } else if (!haveValue) {
-          setRate(FALLBACK_RATE);
-          setIsLive(false);
-          setUpdatedAt(null);
+    (async () => {
+      let live: number | null = null;
+      try {
+        live = await fetchFromFrankfurter();
+      } catch {
+        live = null;
+      }
+      if (live == null) {
+        try {
+          live = await fetchFromErApi();
+        } catch {
+          live = null;
         }
-      })
-      .catch(() => {
-        if (!cancelled && !haveValue) {
-          setRate(FALLBACK_RATE);
-          setIsLive(false);
-          setUpdatedAt(null);
-        }
-      });
+      }
+
+      if (cancelled) return;
+
+      if (live != null) {
+        const fetchedAt = Date.now();
+        setRate(live);
+        setUpdatedAt(fetchedAt);
+        setUnavailable(false);
+        window.localStorage.setItem(
+          CACHE_KEY,
+          JSON.stringify({ rate: live, fetchedAt } satisfies CachedRate),
+        );
+      } else {
+        setUnavailable(true);
+      }
+    })();
 
     return () => {
       cancelled = true;
     };
   }, []);
 
-  return { rate, isLive, updatedAt };
+  return { rate, updatedAt, unavailable };
 }
 
 export function formatILS(amountEur: number, rate: number): string {
