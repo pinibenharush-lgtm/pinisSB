@@ -37,6 +37,8 @@ create table places (
   link text,
   notes text,
   visited boolean not null default false,
+  lat double precision,
+  lng double precision,
   created_by text references people(id),
   created_at timestamptz not null default now()
 );

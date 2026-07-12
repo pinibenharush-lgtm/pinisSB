@@ -32,6 +32,8 @@ export type Place = {
   link: string | null;
   notes: string | null;
   visited: boolean;
+  lat: number | null;
+  lng: number | null;
   created_by: PersonId | null;
   created_at: string;
 };

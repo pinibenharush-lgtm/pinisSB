@@ -2,8 +2,8 @@
 
 A small shared web app for Pini, Sean & Ori's trip to Crete:
 
-- **Balance** — log shared expenses (split 2-way or 3-way), see who owes who.
-- **Places** — add places you want to visit, rate them, link to a website/Google Maps, comment.
+- **Balance** — log shared expenses (split 2-way between Pini and Sean+Ori, or 3-way evenly), see who owes who.
+- **Places** — add places you want to visit, rate them, comment, search them on a free map, and check the straight-line distance between any two.
 - **Checklist** — a shared to-do list (passports, etc.) you can all tick off.
 
 No accounts or passwords: you just pick your name once on your phone and the
@@ -28,6 +28,11 @@ just follow the two sections below once.
    values from this page in the next section:
    - **Project URL** (looks like `https://xxxxx.supabase.co`)
    - **anon public** key (a long string under "Project API keys")
+
+If you already set up Supabase before and this app has been updated since,
+check the [`supabase/migrations`](./supabase/migrations) folder — run any
+new `.sql` files there (same SQL Editor → New query → paste → Run) to bring
+your existing database up to date without losing any data.
 
 ## 2. Deploy the app (Vercel)
 
@@ -58,12 +63,15 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## How the data model works
 
-- **Balance**: every expense has an amount, who paid, and which people split
-  it (2 or 3 of you). Each person's net balance = money they paid minus their
-  share of every expense they're part of. The app then works out the fewest
-  payments needed to settle everyone up.
+- **Balance**: every expense has an amount, who paid, and a split ("3 ways"
+  evenly between all of you, or "2 ways" between Pini's pocket and Sean+Ori's
+  shared pocket). The app works out each side's net balance and the fewest
+  payments needed to settle up.
 - **Places**: each place can be rated 1–5 stars by each person (averaged),
-  and has its own comment thread.
+  has its own comment thread, and can optionally be placed on a free
+  [OpenStreetMap](https://www.openstreetmap.org)-based map (search for it by
+  name when adding it). The Map view shows pins for everywhere you've added
+  and lets you check the straight-line distance between any two places.
 - **Checklist**: a flat shared list — anyone can add, check off, or delete
   items; it shows who added or checked each one.
 
