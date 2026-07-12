@@ -1,5 +1,5 @@
 /** Daily binary logic puzzle (like LinkedIn's "Tango"): fill a 6x6 grid with
- * suns (0) and moons (1) so each row/column has 3 of each, no 3 in a row
+ * two cats (0 and 1) so each row/column has 3 of each, no 3 in a row
  * anywhere, and every "=" / "x" link between cells is respected. */
 
 export type Cell = 0 | 1;

@@ -25,12 +25,11 @@ export default function GamePage() {
 
   async function handleSolved(seconds: number) {
     if (!me) return;
+    // Insert (not upsert): once a result exists for today it's final and
+    // can't be overwritten by a later attempt (e.g. a stale second tab).
     await supabase
       .from("game_results")
-      .upsert(
-        { game_date: today, person_id: me, seconds },
-        { onConflict: "game_date,person_id" },
-      );
+      .insert({ game_date: today, person_id: me, seconds });
   }
 
   const streaks = Object.fromEntries(
@@ -48,7 +47,7 @@ export default function GamePage() {
         <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
           Today&apos;s puzzle
         </p>
-        <h1 className="text-lg font-bold text-slate-800">☀️ Sun &amp; Moon 🌙</h1>
+        <h1 className="text-lg font-bold text-slate-800">🐱 Two Cats 🐈‍⬛</h1>
       </div>
 
       {myResult ? (

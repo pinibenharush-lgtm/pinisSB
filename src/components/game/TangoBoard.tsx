@@ -110,7 +110,7 @@ export default function TangoBoard({
                       : "border-slate-300 bg-white active:bg-aegean-50"
                 }`}
               >
-                {val === 0 ? "☀️" : val === 1 ? "🌙" : ""}
+                {val === 0 ? "🐱" : val === 1 ? "🐈‍⬛" : ""}
               </button>
             );
           }),
@@ -156,7 +156,7 @@ export default function TangoBoard({
         </p>
       ) : (
         <p className="max-w-xs text-center text-xs text-slate-400">
-          Tap a cell to cycle ☀️ → 🌙 → empty. Each row/column needs 3 of
+          Tap a cell to cycle 🐱 → 🐈‍⬛ → empty. Each row/column needs 3 of
           each, no 3 in a row, and every = / × link must be respected.
         </p>
       )}
