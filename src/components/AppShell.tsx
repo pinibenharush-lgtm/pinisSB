@@ -20,7 +20,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
       <div className="flex min-h-screen flex-1 flex-col">
         <header className="sticky top-0 z-10 flex items-center justify-between bg-gradient-to-r from-aegean-700 to-aegean-600 px-4 py-3 shadow-sm md:hidden">
-          <p className="font-display text-base font-semibold tracking-tight text-white">
+          <p className="text-base font-bold tracking-tight text-white">
             Crete Trip 🇬🇷
           </p>
           <button

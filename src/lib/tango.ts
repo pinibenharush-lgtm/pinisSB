@@ -13,6 +13,19 @@ export type DailyPuzzle = {
 
 const SIZE = 6;
 
+// Difficulty ramps across the week: Sunday is the easiest (most givens,
+// fewest constraint links), Saturday the hardest (fewest givens, most
+// links). Index 0 = Sunday ... 6 = Saturday, matching Date#getUTCDay().
+const GIVENS_BY_WEEKDAY = [14, 13, 12, 11, 10, 9, 7];
+const EDGES_BY_WEEKDAY = [5, 6, 6, 7, 7, 8, 9];
+
+/** UTC calendar weekday (0 = Sunday) for a "YYYY-MM-DD" string, independent
+ * of the player's local timezone. */
+function weekdayFromDateStr(dateStr: string): number {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+}
+
 function mulberry32(seed: number) {
   let a = seed;
   return function () {
@@ -188,6 +201,7 @@ function buildUniqueGivens(
   edges: Edge[],
   rng: () => number,
   size: number,
+  targetGivens: number,
 ): (Cell | null)[][] {
   const givens = emptyGrid(size);
   const positions: [number, number][] = [];
@@ -205,11 +219,10 @@ function buildUniqueGivens(
     givens[r][c] = solution[r][c];
   }
 
-  // Trim down towards a friendly target (not a fully-minimal/expert puzzle):
-  // drop givens one at a time as long as the puzzle stays uniquely solvable
-  // AND we're still above the target count. Keeps difficulty consistent
-  // across days instead of sometimes leaving most of the grid pre-filled.
-  const TARGET_GIVENS = 10;
+  // Trim down towards a target given count (not a fully-minimal/expert
+  // puzzle): drop givens one at a time as long as the puzzle stays uniquely
+  // solvable AND we're still above the target. The target itself varies by
+  // day of week so difficulty ramps up toward the weekend.
   const filled = positions.filter(([r, c]) => givens[r][c] != null);
   for (let i = filled.length - 1; i > 0; i--) {
     const j = Math.floor(rng() * (i + 1));
@@ -217,7 +230,7 @@ function buildUniqueGivens(
   }
   let givenCount = filled.length;
   for (const [r, c] of filled) {
-    if (givenCount <= TARGET_GIVENS) break;
+    if (givenCount <= targetGivens) break;
     const backup = givens[r][c];
     givens[r][c] = null;
     if (countSolutions(givens, edges, size, 2) === 1) {
@@ -232,10 +245,17 @@ function buildUniqueGivens(
 
 /** Same puzzle for everyone on a given calendar day (e.g. "2026-07-14"). */
 export function getDailyPuzzle(dateStr: string): DailyPuzzle {
+  const weekday = weekdayFromDateStr(dateStr);
   const rng = mulberry32(seedFromString(dateStr));
   const solution = generateSolution(rng, SIZE);
-  const edges = pickEdges(solution, rng, SIZE, 8);
-  const givens = buildUniqueGivens(solution, edges, rng, SIZE);
+  const edges = pickEdges(solution, rng, SIZE, EDGES_BY_WEEKDAY[weekday]);
+  const givens = buildUniqueGivens(
+    solution,
+    edges,
+    rng,
+    SIZE,
+    GIVENS_BY_WEEKDAY[weekday],
+  );
   return { size: SIZE, givens, edges };
 }
 

@@ -29,7 +29,16 @@ export default function BalanceSnapshot({ rate }: { rate: number | null }) {
             const amount = balances[pocket.id];
             const isEven = Math.abs(amount) < 0.005;
             return (
-              <div key={pocket.id} className="text-center">
+              <div
+                key={pocket.id}
+                className={`rounded-xl p-2 text-center ${
+                  isEven
+                    ? "bg-stone-50"
+                    : amount > 0
+                      ? "bg-emerald-50"
+                      : "bg-red-50"
+                }`}
+              >
                 <p className="text-xs text-stone-500">{pocket.name}</p>
                 <p
                   className={`text-base font-bold ${

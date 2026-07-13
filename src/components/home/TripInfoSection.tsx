@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { Info } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useIdentity } from "@/lib/identity";
 import { useRealtimeTable } from "@/lib/useRealtimeTable";
 import { TripInfo } from "@/lib/types";
+import EmptyState from "@/components/EmptyState";
 
 export default function TripInfoSection() {
   const { me } = useIdentity();
@@ -107,9 +109,10 @@ export default function TripInfoSection() {
       {loading ? (
         <p className="py-4 text-center text-sm text-stone-400">Loading…</p>
       ) : items.length === 0 ? (
-        <p className="py-4 text-center text-sm text-stone-400">
-          No trip info yet.
-        </p>
+        <EmptyState
+          icon={<Info className="mx-auto h-6 w-6" />}
+          message="No trip info yet."
+        />
       ) : (
         <ul className="flex flex-col gap-2">
           {items.map((item) => (
@@ -118,7 +121,9 @@ export default function TripInfoSection() {
               className="rounded-2xl border border-aegean-100 bg-white p-4 shadow-sm"
             >
               <div className="flex items-start gap-3">
-                <span className="text-xl leading-none">{item.icon}</span>
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-aegean-50 text-xl leading-none">
+                  {item.icon}
+                </span>
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold text-stone-800">{item.title}</p>
                   <p className="mt-1 whitespace-pre-line text-sm text-stone-600">

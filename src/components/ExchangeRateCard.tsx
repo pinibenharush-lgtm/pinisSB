@@ -1,3 +1,4 @@
+import { ArrowLeftRight } from "lucide-react";
 import { formatILS, formatRelativeTime } from "@/lib/exchangeRate";
 
 export default function ExchangeRateCard({
@@ -18,7 +19,7 @@ export default function ExchangeRateCard({
           </p>
           {rate != null ? (
             <>
-              <p className="mt-1 font-display text-3xl font-bold tracking-tight text-white">
+              <p className="mt-1 text-3xl font-bold tracking-tight text-white tabular-nums">
                 €1 = {formatILS(1, rate)}
               </p>
               <p className="mt-0.5 text-xs text-aegean-200">
@@ -33,8 +34,8 @@ export default function ExchangeRateCard({
             </p>
           )}
         </div>
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/15 text-2xl">
-          💱
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/15 text-white">
+          <ArrowLeftRight className="h-6 w-6" strokeWidth={2} />
         </div>
       </div>
     </div>

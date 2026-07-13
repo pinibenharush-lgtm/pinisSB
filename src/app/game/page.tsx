@@ -71,10 +71,18 @@ export default function GamePage() {
               .map((r, i) => (
                 <li
                   key={r.id}
-                  className="flex items-center justify-between text-sm"
+                  className={`flex items-center justify-between rounded-xl px-2 py-1.5 text-sm ${
+                    i === 0 ? "bg-terracotta-50" : ""
+                  }`}
                 >
                   <span>
-                    <span className="text-stone-400">{i + 1}.</span>{" "}
+                    <span
+                      className={
+                        i === 0 ? "text-terracotta-600" : "text-stone-400"
+                      }
+                    >
+                      {i === 0 ? "🥇" : `${i + 1}.`}
+                    </span>{" "}
                     <span className="font-medium text-stone-700">
                       {personName(r.person_id)}
                     </span>

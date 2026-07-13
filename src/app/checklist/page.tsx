@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { ListChecks } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useIdentity } from "@/lib/identity";
 import { useRealtimeTable } from "@/lib/useRealtimeTable";
 import { ChecklistItem, personName } from "@/lib/types";
 import PageHeader from "@/components/PageHeader";
+import EmptyState from "@/components/EmptyState";
 
 export default function ChecklistPage() {
   const { me } = useIdentity();
@@ -68,9 +70,10 @@ export default function ChecklistPage() {
       {loading ? (
         <p className="py-8 text-center text-sm text-stone-400">Loading…</p>
       ) : sorted.length === 0 ? (
-        <p className="py-8 text-center text-sm text-stone-400">
-          Nothing on the list yet.
-        </p>
+        <EmptyState
+          icon={<ListChecks className="mx-auto h-6 w-6" />}
+          message="Nothing on the list yet."
+        />
       ) : (
         <ul className="flex flex-col gap-2">
           {sorted.map((item) => (

@@ -19,11 +19,11 @@ export default function BottomNav() {
                 className="flex flex-col items-center gap-0.5 py-2 text-[11px] font-medium"
               >
                 <span
-                  className={`flex h-8 w-8 items-center justify-center rounded-full text-lg leading-none transition-colors ${
+                  className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
                     active ? "bg-aegean-600 text-white" : "text-stone-400"
                   }`}
                 >
-                  {tab.icon}
+                  <tab.icon className="h-5 w-5" strokeWidth={2.25} />
                 </span>
                 <span className={active ? "text-aegean-700" : "text-stone-400"}>
                   {tab.label}

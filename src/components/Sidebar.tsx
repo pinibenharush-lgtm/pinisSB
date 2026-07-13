@@ -17,7 +17,7 @@ export default function Sidebar({
   return (
     <aside className="hidden w-60 shrink-0 flex-col bg-white shadow-[1px_0_0_0_rgba(0,0,0,0.06)] md:flex">
       <div className="bg-gradient-to-br from-aegean-700 to-aegean-600 px-5 py-6">
-        <p className="font-display text-xl font-semibold tracking-tight text-white">
+        <p className="text-xl font-bold tracking-tight text-white">
           Crete Trip
         </p>
         <p className="mt-0.5 text-xs text-aegean-200">🇬🇷 Chania, Crete</p>
@@ -38,11 +38,13 @@ export default function Sidebar({
                   }`}
                 >
                   <span
-                    className={`flex h-8 w-8 items-center justify-center rounded-lg text-base ${
-                      active ? "bg-aegean-600 text-white" : "bg-stone-100"
+                    className={`flex h-8 w-8 items-center justify-center rounded-lg ${
+                      active
+                        ? "bg-aegean-600 text-white"
+                        : "bg-stone-100 text-stone-500"
                     }`}
                   >
-                    {tab.icon}
+                    <tab.icon className="h-5 w-5" strokeWidth={2.25} />
                   </span>
                   {tab.label}
                 </Link>

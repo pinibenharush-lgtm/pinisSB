@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { useRealtimeTable } from "@/lib/useRealtimeTable";
+import { MapPin } from "lucide-react";
 import { Place, PlaceComment, PlaceRating } from "@/lib/types";
 import PageHeader from "@/components/PageHeader";
+import EmptyState from "@/components/EmptyState";
 import PlaceForm from "@/components/places/PlaceForm";
 import PlaceCard from "@/components/places/PlaceCard";
 import PlacesMap from "@/components/places/PlacesMap";
@@ -66,9 +68,10 @@ export default function PlacesPage() {
       {loading ? (
         <p className="py-8 text-center text-sm text-stone-400">Loading…</p>
       ) : places.length === 0 ? (
-        <p className="py-8 text-center text-sm text-stone-400">
-          No places yet. Add somewhere you want to visit!
-        </p>
+        <EmptyState
+          icon={<MapPin className="mx-auto h-6 w-6" />}
+          message="No places yet. Add somewhere you want to visit!"
+        />
       ) : view === "map" ? (
         <>
           <PlacesMap places={places} />

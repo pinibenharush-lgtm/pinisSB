@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { MapPin } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useIdentity } from "@/lib/identity";
 import { Place, PlaceComment, PlaceRating, personName } from "@/lib/types";
@@ -61,18 +62,23 @@ export default function PlaceCard({
   return (
     <div className="rounded-2xl border border-aegean-100 bg-white p-4 shadow-sm">
       <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <p className="truncate font-semibold text-stone-800">{place.name}</p>
-          {place.link && (
-            <a
-              href={place.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-aegean-700 underline"
-            >
-              Open link
-            </a>
-          )}
+        <div className="flex min-w-0 items-start gap-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-aegean-50 text-aegean-700">
+            <MapPin className="h-4 w-4" strokeWidth={2.25} />
+          </span>
+          <div className="min-w-0">
+            <p className="truncate font-semibold text-stone-800">{place.name}</p>
+            {place.link && (
+              <a
+                href={place.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-aegean-700 underline"
+              >
+                Open link
+              </a>
+            )}
+          </div>
         </div>
         <button
           onClick={toggleVisited}

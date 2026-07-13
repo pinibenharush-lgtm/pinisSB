@@ -52,24 +52,24 @@ export default function TangoBoard({
 
   function cycle(r: number, c: number) {
     if (puzzle.givens[r][c] != null || solvedRef.current) return;
-    setGrid((prev) => {
-      const next = prev.map((row) => row.slice());
-      const cur = next[r][c];
-      next[r][c] = cur == null ? 0 : cur === 0 ? 1 : null;
 
-      if (isValidSolution(next, puzzle.edges, puzzle.size)) {
-        solvedRef.current = true;
-        const seconds = Math.max(
-          1,
-          Math.floor((Date.now() - startedAt) / 1000),
-        );
-        setElapsed(seconds);
-        setSolved(true);
-        onSolved(seconds);
-      }
+    // Compute the next grid here (in the event handler) rather than inside
+    // the setGrid updater — updater functions must stay pure, and calling
+    // onSolved (which updates a *different* component's state) from inside
+    // one triggers "setState while rendering another component".
+    const next = grid.map((row) => row.slice());
+    const cur = next[r][c];
+    next[r][c] = cur == null ? 0 : cur === 0 ? 1 : null;
+    setGrid(next);
 
-      return next;
-    });
+    if (isValidSolution(next, puzzle.edges, puzzle.size)) {
+      solvedRef.current = true;
+      // eslint-disable-next-line react-hooks/purity -- runs inside the click handler, not during render
+      const seconds = Math.max(1, Math.floor((Date.now() - startedAt) / 1000));
+      setElapsed(seconds);
+      setSolved(true);
+      onSolved(seconds);
+    }
   }
 
   const size = puzzle.size;
@@ -79,7 +79,7 @@ export default function TangoBoard({
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <p className="font-mono text-sm text-stone-500">
+      <p className="text-sm font-semibold text-stone-500 tabular-nums">
         ⏱ {formatSeconds(elapsed)}
       </p>
 

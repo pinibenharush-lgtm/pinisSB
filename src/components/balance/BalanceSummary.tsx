@@ -21,7 +21,13 @@ export default function BalanceSummary({ expenses }: { expenses: Expense[] }) {
           return (
             <div
               key={pocket.id}
-              className="rounded-2xl border border-aegean-100 bg-white p-3 text-center shadow-sm"
+              className={`rounded-2xl border p-3 text-center shadow-sm ${
+                isEven
+                  ? "border-stone-200 bg-white"
+                  : amount > 0
+                    ? "border-emerald-200 bg-emerald-50"
+                    : "border-red-200 bg-red-50"
+              }`}
             >
               <p className="text-xs font-medium text-stone-500">{pocket.name}</p>
               <p
