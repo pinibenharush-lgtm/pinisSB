@@ -1,63 +1,24 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { useIdentity } from "@/lib/identity";
-import { useRealtimeTable } from "@/lib/useRealtimeTable";
-import { supabase } from "@/lib/supabase";
-import { GameResult, PEOPLE, personName } from "@/lib/types";
+import { useMemo } from "react";
+import { PEOPLE, personName } from "@/lib/types";
 import { getDailyPuzzle } from "@/lib/tango";
-import { todayISO, formatSeconds } from "@/lib/format";
+import { formatSeconds } from "@/lib/format";
 import { computeStreak } from "@/lib/streak";
+import { useGameStatus } from "@/lib/useGameStatus";
 import TangoBoard from "@/components/game/TangoBoard";
 
-function localResultKey(today: string, me: string) {
-  return `crete-trip-game-${today}-${me}`;
-}
-
 export default function GamePage() {
-  const { me } = useIdentity();
-  const today = todayISO();
+  const {
+    today,
+    loading,
+    results,
+    todayResults,
+    solvedSeconds,
+    saveError,
+    recordSolved,
+  } = useGameStatus();
   const puzzle = useMemo(() => getDailyPuzzle(today), [today]);
-
-  const { rows: results, loading } = useRealtimeTable<GameResult>(
-    "game_results",
-    { column: "game_date", ascending: false },
-  );
-
-  // Belt-and-suspenders local lock: even if the save to Supabase fails
-  // (e.g. offline, or the database isn't fully set up), this device won't
-  // let the same person replay today's puzzle once they've solved it.
-  const [localSeconds, setLocalSeconds] = useState<number | null>(null);
-  const [saveError, setSaveError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!me) return;
-    const stored = window.localStorage.getItem(localResultKey(today, me));
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- reading localStorage on mount
-    setLocalSeconds(stored ? parseInt(stored, 10) : null);
-  }, [today, me]);
-
-  const todayResults = results.filter((r) => r.game_date === today);
-  const myResult = me ? todayResults.find((r) => r.person_id === me) : undefined;
-  const solved = myResult ?? (localSeconds != null ? { seconds: localSeconds } : null);
-
-  async function handleSolved(seconds: number) {
-    if (!me) return;
-    window.localStorage.setItem(localResultKey(today, me), String(seconds));
-    setLocalSeconds(seconds);
-
-    const { error } = await supabase
-      .from("game_results")
-      // Insert (not upsert): once a result exists for today it's final and
-      // can't be overwritten by a later attempt (e.g. a stale second tab).
-      .insert({ game_date: today, person_id: me, seconds });
-
-    if (error && error.code !== "23505") {
-      setSaveError(
-        "Your score didn't save to the shared board (the game_results table may be missing — see README.md). It's saved on this device though.",
-      );
-    }
-  }
 
   const streaks = Object.fromEntries(
     PEOPLE.map((p) => {
@@ -77,12 +38,12 @@ export default function GamePage() {
         <h1 className="text-lg font-bold text-slate-800">🐱 Two Cats 🐈‍⬛</h1>
       </div>
 
-      {solved ? (
+      {solvedSeconds != null ? (
         <div className="rounded-xl border border-aegean-100 bg-white p-4 text-center shadow-sm">
           <p className="text-sm text-slate-600">
             You solved today&apos;s puzzle in{" "}
             <span className="font-bold text-aegean-700">
-              {formatSeconds(solved.seconds)}
+              {formatSeconds(solvedSeconds)}
             </span>{" "}
             🎉
           </p>
@@ -95,7 +56,7 @@ export default function GamePage() {
         </div>
       ) : (
         <div className="rounded-xl border border-aegean-100 bg-white p-4 shadow-sm">
-          <TangoBoard puzzle={puzzle} onSolved={handleSolved} />
+          <TangoBoard puzzle={puzzle} onSolved={recordSolved} />
         </div>
       )}
 

@@ -1,60 +1,29 @@
 "use client";
 
-import { useState } from "react";
-import { useRealtimeTable } from "@/lib/useRealtimeTable";
-import { Expense } from "@/lib/types";
-import BalanceSummary from "@/components/balance/BalanceSummary";
-import ExpenseForm from "@/components/balance/ExpenseForm";
-import ExpenseList from "@/components/balance/ExpenseList";
+import { useEurToIlsRate, formatILS, formatRelativeTime } from "@/lib/exchangeRate";
+import BalanceSnapshot from "@/components/home/BalanceSnapshot";
+import GameStatusCard from "@/components/home/GameStatusCard";
+import TripInfoSection from "@/components/home/TripInfoSection";
 
-export default function BalancePage() {
-  const { rows: expenses, loading } = useRealtimeTable<Expense>("expenses", {
-    column: "expense_date",
-    ascending: false,
-  });
-  const [formOpen, setFormOpen] = useState(false);
-  const [editing, setEditing] = useState<Expense | null>(null);
-
-  function openAdd() {
-    setEditing(null);
-    setFormOpen(true);
-  }
-
-  function openEdit(expense: Expense) {
-    setEditing(expense);
-    setFormOpen(true);
-  }
-
-  function closeForm() {
-    setFormOpen(false);
-    setEditing(null);
-  }
+export default function HomePage() {
+  const { rate, updatedAt, unavailable } = useEurToIlsRate();
 
   return (
     <div className="flex flex-col gap-4">
-      <BalanceSummary expenses={expenses} />
-
-      {formOpen ? (
-        <ExpenseForm editing={editing} onDone={closeForm} />
-      ) : (
-        <button
-          onClick={openAdd}
-          className="rounded-xl bg-aegean-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm"
-        >
-          + Add expense
-        </button>
-      )}
-
       <div>
-        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
-          Expenses
+        <h1 className="text-lg font-bold text-slate-800">Crete Trip 🇬🇷</h1>
+        <p className="text-xs text-slate-400">
+          {rate != null
+            ? `1 € ≈ ${formatILS(1, rate)} (rate updated ${formatRelativeTime(updatedAt!)})`
+            : unavailable
+              ? "Exchange rate unavailable right now"
+              : "Loading exchange rate…"}
         </p>
-        {loading ? (
-          <p className="py-8 text-center text-sm text-slate-400">Loading…</p>
-        ) : (
-          <ExpenseList expenses={expenses} onEdit={openEdit} />
-        )}
       </div>
+
+      <BalanceSnapshot rate={rate} />
+      <GameStatusCard />
+      <TripInfoSection />
     </div>
   );
 }

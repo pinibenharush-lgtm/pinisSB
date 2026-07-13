@@ -69,3 +69,12 @@ export type GameResult = {
   seconds: number;
   created_at: string;
 };
+
+export type TripInfo = {
+  id: string;
+  icon: string;
+  title: string;
+  details: string;
+  created_by: PersonId | null;
+  created_at: string;
+};

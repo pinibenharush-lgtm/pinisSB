@@ -2,6 +2,9 @@
 
 A small shared web app for Pini, Sean & Ori's trip to Crete:
 
+- **Home** — the default screen: a balance snapshot, the EUR→ILS rate, today's
+  puzzle status, and the trip info board (flights, hotel, and anything you
+  add).
 - **Balance** — log shared expenses (split 2-way between Pini and Sean+Ori, or 3-way evenly), see who owes who.
 - **Places** — add places you want to visit, rate them, comment, search them on a free map, and check the straight-line distance between any two.
 - **Checklist** — a shared to-do list (passports, etc.) you can all tick off.
@@ -80,6 +83,10 @@ Open [http://localhost:3000](http://localhost:3000).
   the date itself (no external puzzle source, so it never runs out and
   needs no admin work). Everyone gets the exact same puzzle; results
   (solve time) and streaks are shared.
+- **Trip info**: freeform shared cards (icon, title, details) for anything
+  worth having on hand — pre-seeded with your actual flight and Pilot
+  Amphora hotel booking details, and anyone can add more from the Home
+  screen.
 
 There's no login system — identity is just "which name did you tap" stored
 on your own device, and the database is open to anyone with the app's link.
