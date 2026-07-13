@@ -79,7 +79,7 @@ export default function TangoBoard({
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <p className="font-mono text-sm text-slate-500">
+      <p className="font-mono text-sm text-stone-500">
         ⏱ {formatSeconds(elapsed)}
       </p>
 
@@ -104,10 +104,10 @@ export default function TangoBoard({
                 style={{ gridColumn: 2 * c + 1, gridRow: 2 * r + 1 }}
                 className={`flex items-center justify-center rounded-md border text-xl ${
                   given
-                    ? "border-slate-300 bg-slate-100"
+                    ? "border-stone-300 bg-stone-100"
                     : isConflict
                       ? "border-red-300 bg-red-50"
-                      : "border-slate-300 bg-white active:bg-aegean-50"
+                      : "border-stone-300 bg-white active:bg-aegean-50"
                 }`}
               >
                 {val === 0 ? "🐱" : val === 1 ? "🐈‍⬛" : ""}
@@ -124,7 +124,7 @@ export default function TangoBoard({
               <div
                 key={`h-${r}-${c}`}
                 style={{ gridColumn: 2 * c + 2, gridRow: 2 * r + 1 }}
-                className="flex items-center justify-center text-xs font-bold text-slate-400"
+                className="flex items-center justify-center text-xs font-bold text-stone-400"
               >
                 {type === "eq" ? "=" : "×"}
               </div>
@@ -140,7 +140,7 @@ export default function TangoBoard({
               <div
                 key={`v-${r}-${c}`}
                 style={{ gridColumn: 2 * c + 1, gridRow: 2 * r + 2 }}
-                className="flex items-center justify-center text-xs font-bold text-slate-400"
+                className="flex items-center justify-center text-xs font-bold text-stone-400"
               >
                 {type === "eq" ? "=" : "×"}
               </div>
@@ -155,7 +155,7 @@ export default function TangoBoard({
           Solved in {formatSeconds(elapsed)}! 🎉
         </p>
       ) : (
-        <p className="max-w-xs text-center text-xs text-slate-400">
+        <p className="max-w-xs text-center text-xs text-stone-400">
           Tap a cell to cycle 🐱 → 🐈‍⬛ → empty. Each row/column needs 3 of
           each, no 3 in a row, and every = / × link must be respected.
         </p>

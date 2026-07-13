@@ -8,7 +8,7 @@ export default function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="sticky bottom-0 z-10 border-t border-aegean-100 bg-white/95 backdrop-blur pb-[env(safe-area-inset-bottom)] md:hidden">
+    <nav className="sticky bottom-0 z-10 border-t border-stone-200 bg-white/95 backdrop-blur pb-[env(safe-area-inset-bottom)] md:hidden">
       <ul className="mx-auto flex max-w-lg">
         {TABS.map((tab) => {
           const active = pathname === tab.href;
@@ -16,12 +16,18 @@ export default function BottomNav() {
             <li key={tab.href} className="flex-1">
               <Link
                 href={tab.href}
-                className={`flex flex-col items-center gap-1 py-2.5 text-xs font-medium ${
-                  active ? "text-aegean-700" : "text-slate-400"
-                }`}
+                className="flex flex-col items-center gap-0.5 py-2 text-[11px] font-medium"
               >
-                <span className="text-xl leading-none">{tab.icon}</span>
-                {tab.label}
+                <span
+                  className={`flex h-8 w-8 items-center justify-center rounded-full text-lg leading-none transition-colors ${
+                    active ? "bg-aegean-600 text-white" : "text-stone-400"
+                  }`}
+                >
+                  {tab.icon}
+                </span>
+                <span className={active ? "text-aegean-700" : "text-stone-400"}>
+                  {tab.label}
+                </span>
               </Link>
             </li>
           );

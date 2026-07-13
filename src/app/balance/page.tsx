@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRealtimeTable } from "@/lib/useRealtimeTable";
 import { Expense } from "@/lib/types";
+import PageHeader from "@/components/PageHeader";
 import BalanceSummary from "@/components/balance/BalanceSummary";
 import ExpenseForm from "@/components/balance/ExpenseForm";
 import ExpenseList from "@/components/balance/ExpenseList";
@@ -32,6 +33,7 @@ export default function BalancePage() {
 
   return (
     <div className="flex flex-col gap-4">
+      <PageHeader title="Balance" subtitle="Who owes who" />
       <BalanceSummary expenses={expenses} />
 
       {formOpen ? (
@@ -39,18 +41,18 @@ export default function BalancePage() {
       ) : (
         <button
           onClick={openAdd}
-          className="rounded-xl bg-aegean-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm"
+          className="rounded-2xl bg-aegean-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm"
         >
           + Add expense
         </button>
       )}
 
       <div>
-        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-stone-400">
           Expenses
         </p>
         {loading ? (
-          <p className="py-8 text-center text-sm text-slate-400">Loading…</p>
+          <p className="py-8 text-center text-sm text-stone-400">Loading…</p>
         ) : (
           <ExpenseList expenses={expenses} onEdit={openEdit} />
         )}

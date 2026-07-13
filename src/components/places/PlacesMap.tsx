@@ -86,7 +86,7 @@ export default function PlacesMap({ places }: { places: Place[] }) {
 
   if (pinned.length === 0) {
     return (
-      <p className="py-8 text-center text-sm text-slate-400">
+      <p className="py-8 text-center text-sm text-stone-400">
         No places with a location yet. Search for one when adding a place.
       </p>
     );
@@ -95,7 +95,7 @@ export default function PlacesMap({ places }: { places: Place[] }) {
   return (
     <div
       ref={containerRef}
-      className="h-80 w-full overflow-hidden rounded-xl border border-aegean-100"
+      className="h-80 w-full overflow-hidden rounded-2xl border border-aegean-100"
     />
   );
 }

@@ -55,7 +55,7 @@ export default function TripInfoSection() {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+        <p className="text-xs font-semibold uppercase tracking-wide text-stone-400">
           Trip info
         </p>
         <button
@@ -69,7 +69,7 @@ export default function TripInfoSection() {
       {formOpen && (
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-2 rounded-xl border border-aegean-100 bg-white p-4 shadow-sm"
+          className="flex flex-col gap-2 rounded-2xl border border-aegean-100 bg-white p-4 shadow-sm"
         >
           <div className="flex gap-2">
             <input
@@ -77,13 +77,13 @@ export default function TripInfoSection() {
               onChange={(e) => setIcon(e.target.value)}
               placeholder="📌"
               maxLength={4}
-              className="w-14 rounded-lg border border-slate-300 px-2 py-2 text-center text-lg"
+              className="w-14 rounded-lg border border-stone-300 px-2 py-2 text-center text-lg"
             />
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Title, e.g. Car rental"
-              className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm"
             />
           </div>
           <textarea
@@ -91,7 +91,7 @@ export default function TripInfoSection() {
             onChange={(e) => setDetails(e.target.value)}
             placeholder="Details..."
             rows={3}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-stone-300 px-3 py-2 text-sm"
           />
           {error && <p className="text-sm text-red-600">{error}</p>}
           <button
@@ -105,9 +105,9 @@ export default function TripInfoSection() {
       )}
 
       {loading ? (
-        <p className="py-4 text-center text-sm text-slate-400">Loading…</p>
+        <p className="py-4 text-center text-sm text-stone-400">Loading…</p>
       ) : items.length === 0 ? (
-        <p className="py-4 text-center text-sm text-slate-400">
+        <p className="py-4 text-center text-sm text-stone-400">
           No trip info yet.
         </p>
       ) : (
@@ -115,13 +115,13 @@ export default function TripInfoSection() {
           {items.map((item) => (
             <li
               key={item.id}
-              className="rounded-xl border border-aegean-100 bg-white p-4 shadow-sm"
+              className="rounded-2xl border border-aegean-100 bg-white p-4 shadow-sm"
             >
               <div className="flex items-start gap-3">
                 <span className="text-xl leading-none">{item.icon}</span>
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-slate-800">{item.title}</p>
-                  <p className="mt-1 whitespace-pre-line text-sm text-slate-600">
+                  <p className="font-semibold text-stone-800">{item.title}</p>
+                  <p className="mt-1 whitespace-pre-line text-sm text-stone-600">
                     {item.details}
                   </p>
                 </div>

@@ -1,17 +1,31 @@
 @import "tailwindcss";
 
-/* Greek flag blue / Cycladic white palette */
+/* Aegean Sea blue — deepened for a more grounded, editorial feel than a
+ * bright "app blue". Cool, deep, a little nautical. */
 @theme {
-  --color-aegean-50: #eef6fd;
-  --color-aegean-100: #d9ecfa;
-  --color-aegean-200: #b3d9f5;
-  --color-aegean-300: #7fc0ed;
-  --color-aegean-400: #45a1e0;
-  --color-aegean-500: #1c84cf;
-  --color-aegean-600: #0d5eaf;
-  --color-aegean-700: #0a4c8c;
-  --color-aegean-800: #0a3f70;
-  --color-aegean-900: #0c355c;
+  --color-aegean-50: #eff6fb;
+  --color-aegean-100: #dcebf6;
+  --color-aegean-200: #b3d4ea;
+  --color-aegean-300: #7fb6da;
+  --color-aegean-400: #4a91c2;
+  --color-aegean-500: #2c73a3;
+  --color-aegean-600: #175683;
+  --color-aegean-700: #12436a;
+  --color-aegean-800: #113857;
+  --color-aegean-900: #102f48;
+
+  /* Terracotta / sun-baked clay — warm counterpoint to the blue, used
+   * sparingly for highlights and to keep the palette from reading cold. */
+  --color-terracotta-50: #fdf4ef;
+  --color-terracotta-100: #fbe4d6;
+  --color-terracotta-200: #f4c4a3;
+  --color-terracotta-300: #e89f6c;
+  --color-terracotta-400: #d97d42;
+  --color-terracotta-500: #c05f28;
+  --color-terracotta-600: #a04a1e;
+  --color-terracotta-700: #7f3b1a;
+
+  --font-display: var(--font-fraunces), Georgia, serif;
 }
 
 :root {
@@ -20,4 +34,20 @@
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+  background-image:
+    radial-gradient(circle at 15% 0%, color-mix(in oklab, var(--color-aegean-100) 55%, transparent), transparent 55%),
+    radial-gradient(circle at 100% 15%, color-mix(in oklab, var(--color-terracotta-100) 35%, transparent), transparent 45%);
+  background-attachment: fixed;
+}
+
+/* A restrained Greek key (meander) rule, used under headers as a small
+ * signature detail rather than decoration for its own sake. */
+.meander-rule {
+  height: 6px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--color-aegean-600) 0 4px,
+    transparent 4px 8px
+  );
+  opacity: 0.5;
 }

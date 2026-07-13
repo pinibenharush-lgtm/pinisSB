@@ -22,15 +22,15 @@ export default function DistanceCalculator({ places }: { places: Place[] }) {
       : null;
 
   return (
-    <div className="rounded-xl border border-aegean-100 bg-white p-4 shadow-sm">
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+    <div className="rounded-2xl border border-aegean-100 bg-white p-4 shadow-sm">
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-stone-400">
         Distance between places
       </p>
       <div className="flex items-center gap-2">
         <select
           value={aId}
           onChange={(e) => setAId(e.target.value)}
-          className="flex-1 rounded-lg border border-slate-300 px-2 py-2 text-sm"
+          className="flex-1 rounded-lg border border-stone-300 px-2 py-2 text-sm"
         >
           <option value="">From...</option>
           {pinned.map((p) => (
@@ -39,11 +39,11 @@ export default function DistanceCalculator({ places }: { places: Place[] }) {
             </option>
           ))}
         </select>
-        <span className="text-slate-400">&harr;</span>
+        <span className="text-stone-400">&harr;</span>
         <select
           value={bId}
           onChange={(e) => setBId(e.target.value)}
-          className="flex-1 rounded-lg border border-slate-300 px-2 py-2 text-sm"
+          className="flex-1 rounded-lg border border-stone-300 px-2 py-2 text-sm"
         >
           <option value="">To...</option>
           {pinned.map((p) => (
@@ -56,7 +56,7 @@ export default function DistanceCalculator({ places }: { places: Place[] }) {
       {km != null && (
         <p className="mt-2 text-sm">
           <span className="font-bold text-aegean-700">{km.toFixed(1)} km</span>{" "}
-          <span className="text-slate-400">in a straight line</span>
+          <span className="text-stone-400">in a straight line</span>
         </p>
       )}
     </div>

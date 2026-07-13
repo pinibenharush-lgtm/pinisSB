@@ -16,13 +16,13 @@ export default function BalanceSnapshot({ rate }: { rate: number | null }) {
   return (
     <Link
       href="/balance"
-      className="block rounded-xl border border-aegean-100 bg-white p-4 shadow-sm active:bg-aegean-50"
+      className="block rounded-2xl border border-aegean-100 bg-white p-4 shadow-sm active:bg-aegean-50"
     >
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-stone-400">
         Balance
       </p>
       {loading ? (
-        <p className="text-sm text-slate-400">Loading…</p>
+        <p className="text-sm text-stone-400">Loading…</p>
       ) : (
         <div className="grid grid-cols-2 gap-2">
           {POCKETS.map((pocket) => {
@@ -30,11 +30,11 @@ export default function BalanceSnapshot({ rate }: { rate: number | null }) {
             const isEven = Math.abs(amount) < 0.005;
             return (
               <div key={pocket.id} className="text-center">
-                <p className="text-xs text-slate-500">{pocket.name}</p>
+                <p className="text-xs text-stone-500">{pocket.name}</p>
                 <p
                   className={`text-base font-bold ${
                     isEven
-                      ? "text-slate-400"
+                      ? "text-stone-400"
                       : amount > 0
                         ? "text-emerald-600"
                         : "text-red-600"
@@ -45,7 +45,7 @@ export default function BalanceSnapshot({ rate }: { rate: number | null }) {
                     : `${amount > 0 ? "+" : "-"}€${Math.abs(amount).toFixed(2)}`}
                 </p>
                 {!isEven && rate != null && (
-                  <p className="text-[10px] text-slate-400">
+                  <p className="text-[10px] text-stone-400">
                     {formatILS(Math.abs(amount), rate)}
                   </p>
                 )}

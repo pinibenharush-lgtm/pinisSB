@@ -74,23 +74,23 @@ export default function ExpenseForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-3 rounded-xl border border-aegean-100 bg-white p-4 shadow-sm"
+      className="flex flex-col gap-3 rounded-2xl border border-aegean-100 bg-white p-4 shadow-sm"
     >
       <div>
-        <label className="mb-1 block text-xs font-medium text-slate-500">
+        <label className="mb-1 block text-xs font-medium text-stone-500">
           What was it for?
         </label>
         <input
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="e.g. Hotel room, Groceries, Taxi"
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
         />
       </div>
 
       <div className="flex gap-3">
         <div className="flex-1">
-          <label className="mb-1 block text-xs font-medium text-slate-500">
+          <label className="mb-1 block text-xs font-medium text-stone-500">
             Amount (€)
           </label>
           <input
@@ -101,24 +101,24 @@ export default function ExpenseForm({
             step="0.01"
             min="0"
             placeholder="0.00"
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
           />
         </div>
         <div className="flex-1">
-          <label className="mb-1 block text-xs font-medium text-slate-500">
+          <label className="mb-1 block text-xs font-medium text-stone-500">
             Date
           </label>
           <input
             value={date}
             onChange={(e) => setDate(e.target.value)}
             type="date"
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
           />
         </div>
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-medium text-slate-500">
+        <label className="mb-1 block text-xs font-medium text-stone-500">
           Who paid?
         </label>
         <div className="flex gap-2">
@@ -130,7 +130,7 @@ export default function ExpenseForm({
               className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium ${
                 paidBy === p.id
                   ? "border-aegean-600 bg-aegean-600 text-white"
-                  : "border-slate-300 text-slate-600"
+                  : "border-stone-300 text-stone-600"
               }`}
             >
               {p.name}
@@ -140,7 +140,7 @@ export default function ExpenseForm({
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-medium text-slate-500">
+        <label className="mb-1 block text-xs font-medium text-stone-500">
           Split
         </label>
         <div className="flex gap-2">
@@ -150,7 +150,7 @@ export default function ExpenseForm({
             className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium ${
               splitMode === "three_way"
                 ? "border-aegean-600 bg-aegean-50 text-aegean-700"
-                : "border-slate-300 text-slate-400"
+                : "border-stone-300 text-stone-400"
             }`}
           >
             3 ways
@@ -161,13 +161,13 @@ export default function ExpenseForm({
             className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium ${
               splitMode === "couple"
                 ? "border-aegean-600 bg-aegean-50 text-aegean-700"
-                : "border-slate-300 text-slate-400"
+                : "border-stone-300 text-stone-400"
             }`}
           >
             2 ways
           </button>
         </div>
-        <p className="mt-1 text-xs text-slate-400">
+        <p className="mt-1 text-xs text-stone-400">
           {splitMode === "three_way"
             ? "Split evenly between Pini, Sean and Ori"
             : "Split between Pini and Sean+Ori together"}
@@ -197,7 +197,7 @@ export default function ExpenseForm({
         <button
           type="button"
           onClick={onDone}
-          className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-600"
+          className="rounded-lg border border-stone-300 px-4 py-2.5 text-sm font-medium text-stone-600"
         >
           Cancel
         </button>

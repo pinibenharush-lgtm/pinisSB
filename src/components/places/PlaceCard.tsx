@@ -59,10 +59,10 @@ export default function PlaceCard({
   }
 
   return (
-    <div className="rounded-xl border border-aegean-100 bg-white p-4 shadow-sm">
+    <div className="rounded-2xl border border-aegean-100 bg-white p-4 shadow-sm">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="truncate font-semibold text-slate-800">{place.name}</p>
+          <p className="truncate font-semibold text-stone-800">{place.name}</p>
           {place.link && (
             <a
               href={place.link}
@@ -79,7 +79,7 @@ export default function PlaceCard({
           className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ${
             place.visited
               ? "bg-emerald-100 text-emerald-700"
-              : "bg-slate-100 text-slate-500"
+              : "bg-stone-100 text-stone-500"
           }`}
         >
           {place.visited ? "Visited" : "Not visited"}
@@ -87,13 +87,13 @@ export default function PlaceCard({
       </div>
 
       {place.notes && (
-        <p className="mt-1 text-sm text-slate-500">{place.notes}</p>
+        <p className="mt-1 text-sm text-stone-500">{place.notes}</p>
       )}
 
       <div className="mt-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <StarRating value={avg} />
-          <span className="text-xs text-slate-400">
+          <span className="text-xs text-stone-400">
             {ratings.length > 0 ? avg.toFixed(1) : "no ratings"}
           </span>
         </div>
@@ -105,21 +105,21 @@ export default function PlaceCard({
         </button>
       </div>
 
-      <div className="mt-2 flex items-center gap-2 text-xs text-slate-500">
+      <div className="mt-2 flex items-center gap-2 text-xs text-stone-500">
         Your rating: <StarRating value={myRating} onChange={rate} />
       </div>
 
       {showComments && (
-        <div className="mt-3 flex flex-col gap-2 border-t border-slate-100 pt-3">
+        <div className="mt-3 flex flex-col gap-2 border-t border-stone-100 pt-3">
           {comments.length === 0 ? (
-            <p className="text-xs text-slate-400">No comments yet.</p>
+            <p className="text-xs text-stone-400">No comments yet.</p>
           ) : (
             comments.map((c) => (
               <div key={c.id} className="text-sm">
-                <span className="font-medium text-slate-700">
+                <span className="font-medium text-stone-700">
                   {personName(c.person_id)}:
                 </span>{" "}
-                <span className="text-slate-600">{c.comment}</span>
+                <span className="text-stone-600">{c.comment}</span>
               </div>
             ))
           )}
@@ -128,7 +128,7 @@ export default function PlaceCard({
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               placeholder="Add a comment..."
-              className="flex-1 rounded-lg border border-slate-300 px-3 py-1.5 text-sm"
+              className="flex-1 rounded-lg border border-stone-300 px-3 py-1.5 text-sm"
             />
             <button
               type="submit"

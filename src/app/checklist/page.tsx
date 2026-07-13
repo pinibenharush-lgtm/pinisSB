@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { useIdentity } from "@/lib/identity";
 import { useRealtimeTable } from "@/lib/useRealtimeTable";
 import { ChecklistItem, personName } from "@/lib/types";
+import PageHeader from "@/components/PageHeader";
 
 export default function ChecklistPage() {
   const { me } = useIdentity();
@@ -47,25 +48,27 @@ export default function ChecklistPage() {
 
   return (
     <div className="flex flex-col gap-4">
+      <PageHeader title="Checklist" subtitle="Don't forget the important stuff" />
+
       <form onSubmit={addItem} className="flex gap-2">
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="e.g. Take passports"
-          className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          className="flex-1 rounded-xl border border-stone-300 px-3 py-2 text-sm"
         />
         <button
           type="submit"
-          className="rounded-lg bg-aegean-600 px-4 py-2 text-sm font-semibold text-white"
+          className="rounded-xl bg-aegean-600 px-4 py-2 text-sm font-semibold text-white shadow-sm"
         >
           Add
         </button>
       </form>
 
       {loading ? (
-        <p className="py-8 text-center text-sm text-slate-400">Loading…</p>
+        <p className="py-8 text-center text-sm text-stone-400">Loading…</p>
       ) : sorted.length === 0 ? (
-        <p className="py-8 text-center text-sm text-slate-400">
+        <p className="py-8 text-center text-sm text-stone-400">
           Nothing on the list yet.
         </p>
       ) : (
@@ -73,14 +76,14 @@ export default function ChecklistPage() {
           {sorted.map((item) => (
             <li
               key={item.id}
-              className="flex items-center gap-3 rounded-xl border border-aegean-100 bg-white p-3 shadow-sm"
+              className="flex items-center gap-3 rounded-2xl border border-aegean-100 bg-white p-3 shadow-sm"
             >
               <button
                 onClick={() => toggleDone(item)}
                 className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-xs ${
                   item.done
                     ? "border-aegean-600 bg-aegean-600 text-white"
-                    : "border-slate-300 text-transparent"
+                    : "border-stone-300 text-transparent"
                 }`}
               >
                 ✓
@@ -88,12 +91,12 @@ export default function ChecklistPage() {
               <div className="min-w-0 flex-1">
                 <p
                   className={`truncate text-sm ${
-                    item.done ? "text-slate-400 line-through" : "text-slate-800"
+                    item.done ? "text-stone-400 line-through" : "text-stone-800"
                   }`}
                 >
                   {item.text}
                 </p>
-                <p className="text-[11px] text-slate-400">
+                <p className="text-[11px] text-stone-400">
                   {item.done
                     ? `checked by ${personName(item.done_by)}`
                     : item.created_by

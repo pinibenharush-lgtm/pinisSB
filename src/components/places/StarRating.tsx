@@ -18,7 +18,7 @@ export default function StarRating({
           disabled={!onChange}
           onClick={() => onChange?.(star)}
           className={`leading-none ${onChange ? "cursor-pointer" : ""} ${
-            star <= value ? "text-amber-400" : "text-slate-200"
+            star <= value ? "text-amber-400" : "text-stone-200"
           }`}
         >
           ★

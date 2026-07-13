@@ -19,13 +19,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       <Sidebar me={me} onSwitch={clearMe} />
 
       <div className="flex min-h-screen flex-1 flex-col">
-        <header className="sticky top-0 z-10 flex items-center justify-between border-b border-aegean-100 bg-white/95 px-4 py-3 backdrop-blur md:hidden">
-          <div>
-            <p className="text-sm font-bold text-aegean-700">Crete Trip 🇬🇷</p>
-          </div>
+        <header className="sticky top-0 z-10 flex items-center justify-between bg-gradient-to-r from-aegean-700 to-aegean-600 px-4 py-3 shadow-sm md:hidden">
+          <p className="font-display text-base font-semibold tracking-tight text-white">
+            Crete Trip 🇬🇷
+          </p>
           <button
             onClick={clearMe}
-            className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600"
+            className="rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-white active:bg-white/25"
           >
             {personName(me)} &middot; switch
           </button>

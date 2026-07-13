@@ -1,6 +1,8 @@
 "use client";
 
-import { useEurToIlsRate, formatILS, formatRelativeTime } from "@/lib/exchangeRate";
+import { useEurToIlsRate } from "@/lib/exchangeRate";
+import PageHeader from "@/components/PageHeader";
+import ExchangeRateCard from "@/components/ExchangeRateCard";
 import BalanceSnapshot from "@/components/home/BalanceSnapshot";
 import GameStatusCard from "@/components/home/GameStatusCard";
 import TripInfoSection from "@/components/home/TripInfoSection";
@@ -10,17 +12,9 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div>
-        <h1 className="text-lg font-bold text-slate-800">Crete Trip 🇬🇷</h1>
-        <p className="text-xs text-slate-400">
-          {rate != null
-            ? `1 € ≈ ${formatILS(1, rate)} (rate updated ${formatRelativeTime(updatedAt!)})`
-            : unavailable
-              ? "Exchange rate unavailable right now"
-              : "Loading exchange rate…"}
-        </p>
-      </div>
+      <PageHeader title="Crete Trip 🇬🇷" subtitle="Chania, Crete · September 2026" />
 
+      <ExchangeRateCard rate={rate} updatedAt={updatedAt} unavailable={unavailable} />
       <BalanceSnapshot rate={rate} />
       <GameStatusCard />
       <TripInfoSection />
