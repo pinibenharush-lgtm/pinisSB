@@ -34,6 +34,23 @@ export default function GamePage() {
     <div className="flex flex-col gap-4">
       <PageHeader eyebrow="Today's puzzle" title="🐱 Two Cats 🐈‍⬛" />
 
+      <div
+        dir="rtl"
+        className="rounded-2xl border border-aegean-100 bg-aegean-50/60 p-4 text-sm text-stone-700"
+      >
+        <p className="mb-2 font-semibold text-aegean-700">איך משחקים?</p>
+        <ul className="list-disc space-y-1 pr-4">
+          <li>ממלאים כל משבצת בחתול כתום 🐱 או חתול שחור 🐈‍⬛</li>
+          <li>בכל שורה ובכל טור צריך להיות 3 מכל סוג</li>
+          <li>אסור 3 חתולים זהים ברצף (לאורך או לרוחב)</li>
+          <li>
+            הסימן <strong>=</strong> אומר שהמשבצות זהות, והסימן{" "}
+            <strong>×</strong> אומר שהן שונות
+          </li>
+          <li>לוחצים על משבצת כדי להחליף: ריק ← 🐱 ← 🐈‍⬛ ← ריק</li>
+        </ul>
+      </div>
+
       {solvedSeconds != null ? (
         <div className="rounded-2xl border border-aegean-100 bg-white p-4 text-center shadow-sm">
           <p className="text-sm text-stone-600">

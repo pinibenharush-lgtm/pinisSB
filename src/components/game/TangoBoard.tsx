@@ -155,9 +155,8 @@ export default function TangoBoard({
           Solved in {formatSeconds(elapsed)}! 🎉
         </p>
       ) : (
-        <p className="max-w-xs text-center text-xs text-stone-400">
-          Tap a cell to cycle 🐱 → 🐈‍⬛ → empty. Each row/column needs 3 of
-          each, no 3 in a row, and every = / × link must be respected.
+        <p className="text-xs text-stone-400">
+          Tap a cell to cycle: 🐱 → 🐈‍⬛ → empty
         </p>
       )}
     </div>
