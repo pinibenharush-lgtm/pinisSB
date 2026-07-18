@@ -60,6 +60,10 @@ export default function PlacesMap({ places }: { places: Place[] }) {
             .addTo(map)
             .bindPopup(
               `<strong>${escapeHtml(place.name)}</strong>${
+                place.notes
+                  ? `<br/><span>${escapeHtml(place.notes)}</span>`
+                  : ""
+              }${
                 place.link
                   ? `<br/><a href="${escapeAttr(place.link)}" target="_blank" rel="noopener noreferrer">Open link</a>`
                   : ""
