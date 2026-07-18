@@ -34,7 +34,6 @@ export type Place = {
   visited: boolean;
   lat: number | null;
   lng: number | null;
-  photo_url: string | null;
   created_by: PersonId | null;
   created_at: string;
 };
