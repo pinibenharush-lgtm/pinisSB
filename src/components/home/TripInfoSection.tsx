@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Info } from "lucide-react";
+import { Info, Paperclip, X } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useIdentity } from "@/lib/identity";
 import { useRealtimeTable } from "@/lib/useRealtimeTable";
@@ -19,6 +19,44 @@ export default function TripInfoSection() {
   const [details, setDetails] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [uploadingId, setUploadingId] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  async function handleAttach(itemId: string, file: File) {
+    setUploadError(null);
+    setUploadingId(itemId);
+
+    // eslint-disable-next-line react-hooks/purity -- runs inside the file input's change handler, not during render
+    const path = `${itemId}-${Date.now()}-${file.name}`;
+    const { error: uploadErr } = await supabase.storage
+      .from("trip-files")
+      .upload(path, file);
+
+    if (uploadErr) {
+      setUploadError(uploadErr.message);
+      setUploadingId(null);
+      return;
+    }
+
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from("trip-files").getPublicUrl(path);
+
+    const { error: dbError } = await supabase
+      .from("trip_info")
+      .update({ file_url: publicUrl, file_name: file.name })
+      .eq("id", itemId);
+
+    setUploadingId(null);
+    if (dbError) setUploadError(dbError.message);
+  }
+
+  async function handleRemoveAttachment(itemId: string) {
+    await supabase
+      .from("trip_info")
+      .update({ file_url: null, file_name: null })
+      .eq("id", itemId);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -129,6 +167,45 @@ export default function TripInfoSection() {
                   <p className="mt-1 whitespace-pre-line text-sm text-stone-600">
                     {item.details}
                   </p>
+
+                  {item.file_url ? (
+                    <div className="mt-2 flex items-center gap-2">
+                      <a
+                        href={item.file_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 rounded-lg bg-aegean-50 px-2 py-1 text-xs font-medium text-aegean-700"
+                      >
+                        <Paperclip className="h-3 w-3" />
+                        {item.file_name ?? "View attachment"}
+                      </a>
+                      <button
+                        onClick={() => handleRemoveAttachment(item.id)}
+                        aria-label="Remove attachment"
+                        className="text-stone-400"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="mt-2 inline-flex cursor-pointer items-center gap-1 text-xs font-medium text-aegean-700">
+                      <Paperclip className="h-3 w-3" />
+                      {uploadingId === item.id ? "Uploading…" : "Attach file"}
+                      <input
+                        type="file"
+                        className="hidden"
+                        disabled={uploadingId === item.id}
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          e.target.value = "";
+                          if (file) handleAttach(item.id, file);
+                        }}
+                      />
+                    </label>
+                  )}
+                  {uploadingId === null && uploadError && (
+                    <p className="mt-1 text-xs text-red-600">{uploadError}</p>
+                  )}
                 </div>
               </div>
               <button

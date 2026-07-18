@@ -84,6 +84,8 @@ create table trip_info (
   icon text not null default '📌',
   title text not null,
   details text not null,
+  file_url text,
+  file_name text,
   created_by text references people(id),
   created_at timestamptz not null default now()
 );
@@ -110,6 +112,18 @@ Premium Full Insurance (0€ risk/excess) · + Additional driver
 Total: €301.80 · 30% deposit paid · €211.26 due at pick-up
 Confirmation #0SHB18 · Driver: Pinchas Ben Harush
 Bring: physical credit/debit card, driver's license, passport/ID, and this voucher$$, 'pini');
+
+-- Storage bucket for files attached to Trip Info cards (e.g. voucher PDFs).
+insert into storage.buckets (id, name, public)
+values ('trip-files', 'trip-files', true)
+on conflict (id) do nothing;
+
+create policy "trip-files read" on storage.objects
+  for select using (bucket_id = 'trip-files');
+create policy "trip-files insert" on storage.objects
+  for insert with check (bucket_id = 'trip-files');
+create policy "trip-files delete" on storage.objects
+  for delete using (bucket_id = 'trip-files');
 
 -- Row Level Security
 -- This app has no login system (the 3 of you just pick your name in the UI),
