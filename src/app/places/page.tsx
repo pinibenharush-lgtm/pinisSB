@@ -30,6 +30,7 @@ export default function PlacesPage() {
   // One-time background sweep: fill in a photo for any place that doesn't
   // have one yet (covers places added before this feature existed).
   const attemptedRef = useRef<Set<string>>(new Set());
+  const [searchingIds, setSearchingIds] = useState<Set<string>>(new Set());
   useEffect(() => {
     const missing = places.filter(
       (p) => !p.photo_url && !attemptedRef.current.has(p.id),
@@ -37,6 +38,7 @@ export default function PlacesPage() {
     if (missing.length === 0) return;
 
     for (const p of missing) attemptedRef.current.add(p.id);
+    setSearchingIds((prev) => new Set([...prev, ...missing.map((p) => p.id)]));
 
     (async () => {
       for (const p of missing) {
@@ -44,6 +46,11 @@ export default function PlacesPage() {
         if (photoUrl) {
           await supabase.from("places").update({ photo_url: photoUrl }).eq("id", p.id);
         }
+        setSearchingIds((prev) => {
+          const next = new Set(prev);
+          next.delete(p.id);
+          return next;
+        });
       }
     })();
   }, [places]);
@@ -108,6 +115,7 @@ export default function PlacesPage() {
                 place={place}
                 ratings={ratings.filter((r) => r.place_id === place.id)}
                 comments={comments.filter((c) => c.place_id === place.id)}
+                autoSearchingPhoto={searchingIds.has(place.id)}
               />
             </li>
           ))}

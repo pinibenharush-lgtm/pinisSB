@@ -11,10 +11,12 @@ export default function PlaceCard({
   place,
   ratings,
   comments,
+  autoSearchingPhoto,
 }: {
   place: Place;
   ratings: PlaceRating[];
   comments: PlaceComment[];
+  autoSearchingPhoto?: boolean;
 }) {
   const { me } = useIdentity();
   const [commentText, setCommentText] = useState("");
@@ -118,6 +120,11 @@ export default function PlaceCard({
           >
             <X className="h-4 w-4" />
           </button>
+        </div>
+      ) : autoSearchingPhoto ? (
+        <div className="flex h-16 w-full items-center justify-center gap-2 border-b border-dashed border-stone-200 bg-stone-50 text-xs font-medium text-stone-400">
+          <Camera className="h-4 w-4 animate-pulse" />
+          Finding a photo…
         </div>
       ) : (
         <label className="flex h-16 w-full cursor-pointer items-center justify-center gap-2 border-b border-dashed border-stone-200 bg-stone-50 text-xs font-medium text-aegean-700">
