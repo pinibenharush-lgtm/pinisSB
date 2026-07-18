@@ -5,12 +5,15 @@ import { Info, Paperclip, X } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useIdentity } from "@/lib/identity";
 import { useRealtimeTable } from "@/lib/useRealtimeTable";
-import { TripInfo } from "@/lib/types";
+import { TripInfo, TripInfoFile } from "@/lib/types";
 import EmptyState from "@/components/EmptyState";
 
 export default function TripInfoSection() {
   const { me } = useIdentity();
   const { rows: items, loading } = useRealtimeTable<TripInfo>("trip_info", {
+    column: "created_at",
+  });
+  const { rows: files } = useRealtimeTable<TripInfoFile>("trip_info_files", {
     column: "created_at",
   });
   const [formOpen, setFormOpen] = useState(false);
@@ -42,20 +45,19 @@ export default function TripInfoSection() {
       data: { publicUrl },
     } = supabase.storage.from("trip-files").getPublicUrl(path);
 
-    const { error: dbError } = await supabase
-      .from("trip_info")
-      .update({ file_url: publicUrl, file_name: file.name })
-      .eq("id", itemId);
+    const { error: dbError } = await supabase.from("trip_info_files").insert({
+      trip_info_id: itemId,
+      file_url: publicUrl,
+      file_name: file.name,
+      created_by: me,
+    });
 
     setUploadingId(null);
     if (dbError) setUploadError(dbError.message);
   }
 
-  async function handleRemoveAttachment(itemId: string) {
-    await supabase
-      .from("trip_info")
-      .update({ file_url: null, file_name: null })
-      .eq("id", itemId);
+  async function handleRemoveAttachment(fileId: string) {
+    await supabase.from("trip_info_files").delete().eq("id", fileId);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -153,41 +155,48 @@ export default function TripInfoSection() {
         />
       ) : (
         <ul className="flex flex-col gap-2">
-          {items.map((item) => (
-            <li
-              key={item.id}
-              className="rounded-2xl border border-aegean-100 bg-white p-4 shadow-sm"
-            >
-              <div className="flex items-start gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-aegean-50 text-xl leading-none">
-                  {item.icon}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-stone-800">{item.title}</p>
-                  <p className="mt-1 whitespace-pre-line text-sm text-stone-600">
-                    {item.details}
-                  </p>
+          {items.map((item) => {
+            const itemFiles = files.filter((f) => f.trip_info_id === item.id);
+            return (
+              <li
+                key={item.id}
+                className="rounded-2xl border border-aegean-100 bg-white p-4 shadow-sm"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-aegean-50 text-xl leading-none">
+                    {item.icon}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-stone-800">{item.title}</p>
+                    <p className="mt-1 whitespace-pre-line text-sm text-stone-600">
+                      {item.details}
+                    </p>
 
-                  {item.file_url ? (
-                    <div className="mt-2 flex items-center gap-2">
-                      <a
-                        href={item.file_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 rounded-lg bg-aegean-50 px-2 py-1 text-xs font-medium text-aegean-700"
-                      >
-                        <Paperclip className="h-3 w-3" />
-                        {item.file_name ?? "View attachment"}
-                      </a>
-                      <button
-                        onClick={() => handleRemoveAttachment(item.id)}
-                        aria-label="Remove attachment"
-                        className="text-stone-400"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </div>
-                  ) : (
+                    {itemFiles.length > 0 && (
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
+                        {itemFiles.map((f) => (
+                          <div key={f.id} className="flex items-center gap-1">
+                            <a
+                              href={f.file_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 rounded-lg bg-aegean-50 px-2 py-1 text-xs font-medium text-aegean-700"
+                            >
+                              <Paperclip className="h-3 w-3" />
+                              {f.file_name}
+                            </a>
+                            <button
+                              onClick={() => handleRemoveAttachment(f.id)}
+                              aria-label="Remove attachment"
+                              className="text-stone-400"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
                     <label className="mt-2 inline-flex cursor-pointer items-center gap-1 text-xs font-medium text-aegean-700">
                       <Paperclip className="h-3 w-3" />
                       {uploadingId === item.id ? "Uploading…" : "Attach file"}
@@ -202,20 +211,20 @@ export default function TripInfoSection() {
                         }}
                       />
                     </label>
-                  )}
-                  {uploadingId === null && uploadError && (
-                    <p className="mt-1 text-xs text-red-600">{uploadError}</p>
-                  )}
+                    {uploadingId === null && uploadError && (
+                      <p className="mt-1 text-xs text-red-600">{uploadError}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <button
-                onClick={() => handleDelete(item.id)}
-                className="mt-2 text-xs font-medium text-red-600"
-              >
-                Remove
-              </button>
-            </li>
-          ))}
+                <button
+                  onClick={() => handleDelete(item.id)}
+                  className="mt-2 text-xs font-medium text-red-600"
+                >
+                  Remove
+                </button>
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

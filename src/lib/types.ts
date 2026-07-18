@@ -75,8 +75,15 @@ export type TripInfo = {
   icon: string;
   title: string;
   details: string;
-  file_url: string | null;
-  file_name: string | null;
+  created_by: PersonId | null;
+  created_at: string;
+};
+
+export type TripInfoFile = {
+  id: string;
+  trip_info_id: string;
+  file_url: string;
+  file_name: string;
   created_by: PersonId | null;
   created_at: string;
 };
