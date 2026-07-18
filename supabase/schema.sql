@@ -41,6 +41,7 @@ create table places (
   visited boolean not null default false,
   lat double precision,
   lng double precision,
+  photo_url text,
   created_by text references people(id),
   created_at timestamptz not null default now()
 );
@@ -124,6 +125,18 @@ create policy "trip-files insert" on storage.objects
   for insert with check (bucket_id = 'trip-files');
 create policy "trip-files delete" on storage.objects
   for delete using (bucket_id = 'trip-files');
+
+-- Storage bucket for place photos.
+insert into storage.buckets (id, name, public)
+values ('place-photos', 'place-photos', true)
+on conflict (id) do nothing;
+
+create policy "place-photos read" on storage.objects
+  for select using (bucket_id = 'place-photos');
+create policy "place-photos insert" on storage.objects
+  for insert with check (bucket_id = 'place-photos');
+create policy "place-photos delete" on storage.objects
+  for delete using (bucket_id = 'place-photos');
 
 -- Row Level Security
 -- This app has no login system (the 3 of you just pick your name in the UI),
