@@ -21,6 +21,10 @@ export default function PlaceCard({
   const [showComments, setShowComments] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [photoError, setPhotoError] = useState<string | null>(null);
+  // Tracks the specific URL that failed to load, so a *new* photo_url
+  // (e.g. from the auto-photo sweep retrying) always gets a fresh chance.
+  const [brokenPhotoUrl, setBrokenPhotoUrl] = useState<string | null>(null);
+  const photoBroken = place.photo_url != null && place.photo_url === brokenPhotoUrl;
 
   async function handlePhoto(file: File) {
     setPhotoError(null);
@@ -95,13 +99,17 @@ export default function PlaceCard({
 
   return (
     <div className="overflow-hidden rounded-2xl border border-aegean-100 bg-white shadow-sm">
-      {place.photo_url ? (
+      {place.photo_url && !photoBroken ? (
         <div className="relative">
           {/* eslint-disable-next-line @next/next/no-img-element -- user-uploaded photo from Supabase Storage, not a static asset */}
           <img
             src={place.photo_url}
             alt={place.name}
             className="h-40 w-full object-cover"
+            onError={() => {
+              setBrokenPhotoUrl(place.photo_url);
+              removePhoto();
+            }}
           />
           <button
             onClick={removePhoto}
