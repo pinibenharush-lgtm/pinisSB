@@ -58,6 +58,17 @@ export function useGameStatus() {
     }
   }
 
+  /** Removes *your own* result for today (e.g. it was recorded under your
+   * name by mistake on a shared device) so you can play for real. */
+  async function removeMyResult() {
+    if (!me) return;
+    window.localStorage.removeItem(localResultKey(today, me));
+    setLocalSeconds(null);
+    if (myResult) {
+      await supabase.from("game_results").delete().eq("id", myResult.id);
+    }
+  }
+
   return {
     today,
     loading,
@@ -68,5 +79,6 @@ export function useGameStatus() {
     totalToday: todayResults.length,
     saveError,
     recordSolved,
+    removeMyResult,
   };
 }

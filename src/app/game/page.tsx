@@ -6,10 +6,12 @@ import { getDailyPuzzle } from "@/lib/tango";
 import { formatSeconds } from "@/lib/format";
 import { computeStreak } from "@/lib/streak";
 import { useGameStatus } from "@/lib/useGameStatus";
+import { useIdentity } from "@/lib/identity";
 import PageHeader from "@/components/PageHeader";
 import TangoBoard from "@/components/game/TangoBoard";
 
 export default function GamePage() {
+  const { me } = useIdentity();
   const {
     today,
     loading,
@@ -18,6 +20,7 @@ export default function GamePage() {
     solvedSeconds,
     saveError,
     recordSolved,
+    removeMyResult,
   } = useGameStatus();
   const puzzle = useMemo(() => getDailyPuzzle(today), [today]);
 
@@ -79,8 +82,6 @@ export default function GamePage() {
         </p>
         {loading ? (
           <p className="text-sm text-stone-400">Loading…</p>
-        ) : todayResults.length === 0 ? (
-          <p className="text-sm text-stone-400">Nobody has solved it yet.</p>
         ) : (
           <ul className="flex flex-col gap-2">
             {[...todayResults]
@@ -104,11 +105,42 @@ export default function GamePage() {
                       {personName(r.person_id)}
                     </span>
                   </span>
-                  <span className="font-bold text-aegean-700">
-                    {formatSeconds(r.seconds)}
+                  <span className="flex items-center gap-2">
+                    <span className="font-bold text-aegean-700">
+                      {formatSeconds(r.seconds)}
+                    </span>
+                    {r.person_id === me && (
+                      <button
+                        onClick={() => {
+                          if (
+                            window.confirm(
+                              "Remove this result? Only do this if it wasn't actually you — you'll then be able to play today's puzzle for real.",
+                            )
+                          ) {
+                            removeMyResult();
+                          }
+                        }}
+                        className="text-[11px] font-medium text-red-600"
+                      >
+                        Not you?
+                      </button>
+                    )}
                   </span>
                 </li>
               ))}
+            {PEOPLE.filter(
+              (p) => !todayResults.some((r) => r.person_id === p.id),
+            ).map((p) => (
+              <li
+                key={p.id}
+                className="flex items-center justify-between rounded-xl px-2 py-1.5 text-sm"
+              >
+                <span className="font-medium text-stone-500">{p.name}</span>
+                <span className="text-xs text-stone-400">
+                  Hasn&apos;t played yet
+                </span>
+              </li>
+            ))}
           </ul>
         )}
       </div>
