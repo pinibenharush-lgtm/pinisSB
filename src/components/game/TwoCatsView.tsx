@@ -2,15 +2,14 @@
 
 import { useMemo } from "react";
 import { PEOPLE, personName } from "@/lib/types";
-import { getDailyTutPuzzle } from "@/lib/tut";
+import { getDailyPuzzle } from "@/lib/tango";
 import { formatSeconds } from "@/lib/format";
 import { computeStreak } from "@/lib/streak";
-import { useTutStatus } from "@/lib/useTutStatus";
+import { useGameStatus } from "@/lib/useGameStatus";
 import { useIdentity } from "@/lib/identity";
-import PageHeader from "@/components/PageHeader";
-import TutBoard from "@/components/game/TutBoard";
+import TangoBoard from "@/components/game/TangoBoard";
 
-export default function TutPage() {
+export default function TwoCatsView() {
   const { me } = useIdentity();
   const {
     today,
@@ -21,8 +20,8 @@ export default function TutPage() {
     saveError,
     recordSolved,
     removeMyResult,
-  } = useTutStatus();
-  const puzzle = useMemo(() => getDailyTutPuzzle(today), [today]);
+  } = useGameStatus();
+  const puzzle = useMemo(() => getDailyPuzzle(today), [today]);
 
   const streaks = Object.fromEntries(
     PEOPLE.map((p) => {
@@ -35,20 +34,20 @@ export default function TutPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <PageHeader eyebrow="Today's puzzle" title="🍓 Tut" />
-
       <div
         dir="rtl"
         className="rounded-2xl border border-aegean-100 bg-aegean-50/60 p-4 text-sm text-stone-700"
       >
         <p className="mb-2 font-semibold text-aegean-700">איך משחקים?</p>
         <ul className="list-disc space-y-1 pr-4">
-          <li>שמים תות 🍓 אחד בדיוק בכל שורה, בכל טור ובכל אזור צבע</li>
-          <li>אסור לשני תותים לגעת זה בזה, גם באלכסון</li>
+          <li>ממלאים כל משבצת בחתול כתום 🐱 או חתול שחור 🐈‍⬛</li>
+          <li>בכל שורה ובכל טור צריך להיות 3 מכל סוג</li>
+          <li>אסור 3 חתולים זהים ברצף (לאורך או לרוחב)</li>
           <li>
-            לוחצים על משבצת כדי להחליף: ריק ← ✕ ← 🍓 ← ריק (ה־✕ עוזר לסמן
-            משבצות שבטוח לא מתאימות)
+            הסימן <strong>=</strong> אומר שהמשבצות זהות, והסימן{" "}
+            <strong>×</strong> אומר שהן שונות
           </li>
+          <li>לוחצים על משבצת כדי להחליף: ריק ← 🐱 ← 🐈‍⬛ ← ריק</li>
         </ul>
       </div>
 
@@ -70,7 +69,7 @@ export default function TutPage() {
         </div>
       ) : (
         <div className="rounded-2xl border border-aegean-100 bg-white p-4 shadow-sm">
-          <TutBoard puzzle={puzzle} onSolved={recordSolved} />
+          <TangoBoard puzzle={puzzle} onSolved={recordSolved} />
         </div>
       )}
 

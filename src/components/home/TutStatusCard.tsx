@@ -9,7 +9,7 @@ export default function TutStatusCard() {
 
   return (
     <Link
-      href="/tut"
+      href="/game?g=tut"
       className="block rounded-2xl border border-aegean-100 bg-white p-4 shadow-sm active:bg-aegean-50"
     >
       <div className="flex items-center justify-between gap-3">
