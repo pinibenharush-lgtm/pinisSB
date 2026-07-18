@@ -17,6 +17,7 @@ export default function TripInfoSection() {
     column: "created_at",
   });
   const [formOpen, setFormOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [icon, setIcon] = useState("📌");
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
@@ -24,6 +25,29 @@ export default function TripInfoSection() {
   const [error, setError] = useState<string | null>(null);
   const [uploadingId, setUploadingId] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
+
+  function openAdd() {
+    setEditingId(null);
+    setIcon("📌");
+    setTitle("");
+    setDetails("");
+    setError(null);
+    setFormOpen(true);
+  }
+
+  function openEdit(item: TripInfo) {
+    setEditingId(item.id);
+    setIcon(item.icon);
+    setTitle(item.title);
+    setDetails(item.details);
+    setError(null);
+    setFormOpen(true);
+  }
+
+  function closeForm() {
+    setFormOpen(false);
+    setEditingId(null);
+  }
 
   async function handleAttach(itemId: string, file: File) {
     setUploadError(null);
@@ -70,12 +94,14 @@ export default function TripInfoSection() {
     }
 
     setSaving(true);
-    const { error: dbError } = await supabase.from("trip_info").insert({
+    const payload = {
       icon: icon.trim() || "📌",
       title: title.trim(),
       details: details.trim(),
-      created_by: me,
-    });
+    };
+    const { error: dbError } = editingId
+      ? await supabase.from("trip_info").update(payload).eq("id", editingId)
+      : await supabase.from("trip_info").insert({ ...payload, created_by: me });
     setSaving(false);
 
     if (dbError) {
@@ -83,10 +109,7 @@ export default function TripInfoSection() {
       return;
     }
 
-    setIcon("📌");
-    setTitle("");
-    setDetails("");
-    setFormOpen(false);
+    closeForm();
   }
 
   async function handleDelete(id: string) {
@@ -101,7 +124,7 @@ export default function TripInfoSection() {
           Trip info
         </p>
         <button
-          onClick={() => setFormOpen((f) => !f)}
+          onClick={() => (formOpen ? closeForm() : openAdd())}
           className="text-xs font-medium text-aegean-700"
         >
           {formOpen ? "Cancel" : "+ Add info"}
@@ -141,7 +164,7 @@ export default function TripInfoSection() {
             disabled={saving}
             className="rounded-lg bg-aegean-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
           >
-            {saving ? "Saving..." : "Save"}
+            {saving ? "Saving..." : editingId ? "Save changes" : "Save"}
           </button>
         </form>
       )}
@@ -216,12 +239,20 @@ export default function TripInfoSection() {
                     )}
                   </div>
                 </div>
-                <button
-                  onClick={() => handleDelete(item.id)}
-                  className="mt-2 text-xs font-medium text-red-600"
-                >
-                  Remove
-                </button>
+                <div className="mt-2 flex gap-3">
+                  <button
+                    onClick={() => openEdit(item)}
+                    className="text-xs font-medium text-aegean-700"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(item.id)}
+                    className="text-xs font-medium text-red-600"
+                  >
+                    Remove
+                  </button>
+                </div>
               </li>
             );
           })}

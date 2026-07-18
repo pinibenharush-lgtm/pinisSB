@@ -4,12 +4,19 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useIdentity } from "@/lib/identity";
 import { NominatimResult, searchPlaces } from "@/lib/geo";
+import { Place } from "@/lib/types";
 
-export default function PlaceForm({ onDone }: { onDone: () => void }) {
+export default function PlaceForm({
+  editing,
+  onDone,
+}: {
+  editing?: Place | null;
+  onDone: () => void;
+}) {
   const { me } = useIdentity();
-  const [name, setName] = useState("");
-  const [link, setLink] = useState("");
-  const [notes, setNotes] = useState("");
+  const [name, setName] = useState(editing?.name ?? "");
+  const [link, setLink] = useState(editing?.link ?? "");
+  const [notes, setNotes] = useState(editing?.notes ?? "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -17,7 +24,9 @@ export default function PlaceForm({ onDone }: { onDone: () => void }) {
   const [searching, setSearching] = useState(false);
   const [results, setResults] = useState<NominatimResult[]>([]);
   const [picked, setPicked] = useState<{ lat: number; lng: number } | null>(
-    null,
+    editing?.lat != null && editing?.lng != null
+      ? { lat: editing.lat, lng: editing.lng }
+      : null,
   );
 
   async function handleSearch(e: React.FormEvent) {
@@ -50,14 +59,16 @@ export default function PlaceForm({ onDone }: { onDone: () => void }) {
     }
 
     setSaving(true);
-    const { error: dbError } = await supabase.from("places").insert({
+    const payload = {
       name: name.trim(),
       link: link.trim() || null,
       notes: notes.trim() || null,
       lat: picked?.lat ?? null,
       lng: picked?.lng ?? null,
-      created_by: me,
-    });
+    };
+    const { error: dbError } = editing
+      ? await supabase.from("places").update(payload).eq("id", editing.id)
+      : await supabase.from("places").insert({ ...payload, created_by: me });
     setSaving(false);
 
     if (dbError) {
@@ -161,7 +172,7 @@ export default function PlaceForm({ onDone }: { onDone: () => void }) {
           disabled={saving}
           className="flex-1 rounded-lg bg-aegean-600 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
         >
-          {saving ? "Saving..." : "Add place"}
+          {saving ? "Saving..." : editing ? "Save changes" : "Add place"}
         </button>
         <button
           type="button"

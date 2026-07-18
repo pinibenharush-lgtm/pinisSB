@@ -23,17 +23,33 @@ export default function PlacesPage() {
     column: "created_at",
   });
   const [formOpen, setFormOpen] = useState(false);
+  const [editing, setEditing] = useState<Place | null>(null);
   const [view, setView] = useState<"list" | "map">("list");
+
+  function openAdd() {
+    setEditing(null);
+    setFormOpen(true);
+  }
+
+  function openEdit(place: Place) {
+    setEditing(place);
+    setFormOpen(true);
+  }
+
+  function closeForm() {
+    setFormOpen(false);
+    setEditing(null);
+  }
 
   return (
     <div className="flex flex-col gap-4">
       <PageHeader title="Places" subtitle="Where to go in Crete" />
 
       {formOpen ? (
-        <PlaceForm onDone={() => setFormOpen(false)} />
+        <PlaceForm editing={editing} onDone={closeForm} />
       ) : (
         <button
-          onClick={() => setFormOpen(true)}
+          onClick={openAdd}
           className="rounded-2xl bg-aegean-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm"
         >
           + Add place
@@ -85,6 +101,7 @@ export default function PlacesPage() {
                 place={place}
                 ratings={ratings.filter((r) => r.place_id === place.id)}
                 comments={comments.filter((c) => c.place_id === place.id)}
+                onEdit={openEdit}
               />
             </li>
           ))}

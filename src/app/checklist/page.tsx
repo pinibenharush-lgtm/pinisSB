@@ -16,6 +16,8 @@ export default function ChecklistPage() {
     { column: "created_at" },
   );
   const [text, setText] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editText, setEditText] = useState("");
 
   async function addItem(e: React.FormEvent) {
     e.preventDefault();
@@ -39,6 +41,25 @@ export default function ChecklistPage() {
 
   async function deleteItem(id: string) {
     await supabase.from("checklist_items").delete().eq("id", id);
+  }
+
+  function startEdit(item: ChecklistItem) {
+    setEditingId(item.id);
+    setEditText(item.text);
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+    setEditText("");
+  }
+
+  async function saveEdit(id: string) {
+    if (!editText.trim()) return;
+    await supabase
+      .from("checklist_items")
+      .update({ text: editText.trim() })
+      .eq("id", id);
+    cancelEdit();
   }
 
   const sorted = [...items].sort((a, b) => {
@@ -76,45 +97,77 @@ export default function ChecklistPage() {
         />
       ) : (
         <ul className="flex flex-col gap-2">
-          {sorted.map((item) => (
-            <li
-              key={item.id}
-              className="flex items-center gap-3 rounded-2xl border border-aegean-100 bg-white p-3 shadow-sm"
-            >
-              <button
-                onClick={() => toggleDone(item)}
-                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-xs ${
-                  item.done
-                    ? "border-aegean-600 bg-aegean-600 text-white"
-                    : "border-stone-300 text-transparent"
-                }`}
+          {sorted.map((item) =>
+            editingId === item.id ? (
+              <li
+                key={item.id}
+                className="flex items-center gap-2 rounded-2xl border border-aegean-100 bg-white p-3 shadow-sm"
               >
-                ✓
-              </button>
-              <div className="min-w-0 flex-1">
-                <p
-                  className={`truncate text-sm ${
-                    item.done ? "text-stone-400 line-through" : "text-stone-800"
+                <input
+                  value={editText}
+                  onChange={(e) => setEditText(e.target.value)}
+                  autoFocus
+                  className="min-w-0 flex-1 rounded-lg border border-stone-300 px-2 py-1.5 text-sm"
+                />
+                <button
+                  onClick={() => saveEdit(item.id)}
+                  className="shrink-0 text-xs font-medium text-aegean-700"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={cancelEdit}
+                  className="shrink-0 text-xs font-medium text-stone-500"
+                >
+                  Cancel
+                </button>
+              </li>
+            ) : (
+              <li
+                key={item.id}
+                className="flex items-center gap-3 rounded-2xl border border-aegean-100 bg-white p-3 shadow-sm"
+              >
+                <button
+                  onClick={() => toggleDone(item)}
+                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-xs ${
+                    item.done
+                      ? "border-aegean-600 bg-aegean-600 text-white"
+                      : "border-stone-300 text-transparent"
                   }`}
                 >
-                  {item.text}
-                </p>
-                <p className="text-[11px] text-stone-400">
-                  {item.done
-                    ? `checked by ${personName(item.done_by)}`
-                    : item.created_by
-                      ? `added by ${personName(item.created_by)}`
-                      : ""}
-                </p>
-              </div>
-              <button
-                onClick={() => deleteItem(item.id)}
-                className="shrink-0 text-xs font-medium text-red-600"
-              >
-                Delete
-              </button>
-            </li>
-          ))}
+                  ✓
+                </button>
+                <div className="min-w-0 flex-1">
+                  <p
+                    className={`truncate text-sm ${
+                      item.done ? "text-stone-400 line-through" : "text-stone-800"
+                    }`}
+                  >
+                    {item.text}
+                  </p>
+                  <p className="text-[11px] text-stone-400">
+                    {item.done
+                      ? `checked by ${personName(item.done_by)}`
+                      : item.created_by
+                        ? `added by ${personName(item.created_by)}`
+                        : ""}
+                  </p>
+                </div>
+                <button
+                  onClick={() => startEdit(item)}
+                  className="shrink-0 text-xs font-medium text-aegean-700"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => deleteItem(item.id)}
+                  className="shrink-0 text-xs font-medium text-red-600"
+                >
+                  Delete
+                </button>
+              </li>
+            ),
+          )}
         </ul>
       )}
     </div>

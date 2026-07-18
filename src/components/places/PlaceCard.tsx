@@ -11,10 +11,12 @@ export default function PlaceCard({
   place,
   ratings,
   comments,
+  onEdit,
 }: {
   place: Place;
   ratings: PlaceRating[];
   comments: PlaceComment[];
+  onEdit: (place: Place) => void;
 }) {
   const { me } = useIdentity();
   const [commentText, setCommentText] = useState("");
@@ -146,12 +148,20 @@ export default function PlaceCard({
         </div>
       )}
 
-      <button
-        onClick={deletePlace}
-        className="mt-3 text-xs font-medium text-red-600"
-      >
-        Remove place
-      </button>
+      <div className="mt-3 flex gap-3">
+        <button
+          onClick={() => onEdit(place)}
+          className="text-xs font-medium text-aegean-700"
+        >
+          Edit
+        </button>
+        <button
+          onClick={deletePlace}
+          className="text-xs font-medium text-red-600"
+        >
+          Remove place
+        </button>
+      </div>
     </div>
   );
 }
