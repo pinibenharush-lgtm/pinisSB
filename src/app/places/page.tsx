@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRealtimeTable } from "@/lib/useRealtimeTable";
 import { MapPin } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { findPlacePhoto } from "@/lib/placePhoto";
 import { Place, PlaceComment, PlaceRating } from "@/lib/types";
 import PageHeader from "@/components/PageHeader";
 import EmptyState from "@/components/EmptyState";
@@ -24,6 +26,27 @@ export default function PlacesPage() {
   });
   const [formOpen, setFormOpen] = useState(false);
   const [view, setView] = useState<"list" | "map">("list");
+
+  // One-time background sweep: fill in a photo for any place that doesn't
+  // have one yet (covers places added before this feature existed).
+  const attemptedRef = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    const missing = places.filter(
+      (p) => !p.photo_url && !attemptedRef.current.has(p.id),
+    );
+    if (missing.length === 0) return;
+
+    for (const p of missing) attemptedRef.current.add(p.id);
+
+    (async () => {
+      for (const p of missing) {
+        const photoUrl = await findPlacePhoto(p.name);
+        if (photoUrl) {
+          await supabase.from("places").update({ photo_url: photoUrl }).eq("id", p.id);
+        }
+      }
+    })();
+  }, [places]);
 
   return (
     <div className="flex flex-col gap-4">

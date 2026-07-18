@@ -4,6 +4,7 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useIdentity } from "@/lib/identity";
 import { NominatimResult, searchPlaces } from "@/lib/geo";
+import { findPlacePhoto } from "@/lib/placePhoto";
 
 export default function PlaceForm({ onDone }: { onDone: () => void }) {
   const { me } = useIdentity();
@@ -50,12 +51,14 @@ export default function PlaceForm({ onDone }: { onDone: () => void }) {
     }
 
     setSaving(true);
+    const photoUrl = await findPlacePhoto(name.trim());
     const { error: dbError } = await supabase.from("places").insert({
       name: name.trim(),
       link: link.trim() || null,
       notes: notes.trim() || null,
       lat: picked?.lat ?? null,
       lng: picked?.lng ?? null,
+      photo_url: photoUrl,
       created_by: me,
     });
     setSaving(false);
