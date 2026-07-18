@@ -102,7 +102,14 @@ Check-in: Thu 3 Sep 2026, from 14:00
 Check-out: Wed 9 Sep 2026, until 12:00
 Free cancellation until 18:00 (property time) on 20 Aug 2026 — after that the full amount is charged
 Georgioupoli, Chania, Crete · Booking #61662686$$, 'pini'),
-('🏖️', 'Pilot Beach Resort access', $$We can use the facilities at the neighboring Pilot Beach Resort. Our hotel rate also includes a one-time 20% discount voucher for spa treatments and for the resort's restaurants.$$, 'pini');
+('🏖️', 'Pilot Beach Resort access', $$We can use the facilities at the neighboring Pilot Beach Resort. Our hotel rate also includes a one-time 20% discount voucher for spa treatments and for the resort's restaurants.$$, 'pini'),
+('🚗', 'Car Rental — Gomega (Skoda Kamiq or similar)', $$Pick-up: Thu 3 Sep 2026, 16:00 — Heraklion Airport (direct; free shuttle, look out for a WhatsApp message with the meeting point)
+Drop-off: Wed 9 Sep 2026, 10:30 — Heraklion Airport
+Compact Crossover, Automatic, A/C, 5 seats, Gasoline
+Premium Full Insurance (0€ risk/excess) · + Additional driver
+Total: €301.80 · 30% deposit paid · €211.26 due at pick-up
+Confirmation #0SHB18 · Driver: Pinchas Ben Harush
+Bring: physical credit/debit card, driver's license, passport/ID, and this voucher$$, 'pini');
 
 -- Row Level Security
 -- This app has no login system (the 3 of you just pick your name in the UI),
