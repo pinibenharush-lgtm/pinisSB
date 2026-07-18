@@ -5,6 +5,7 @@ import PageHeader from "@/components/PageHeader";
 import ExchangeRateCard from "@/components/ExchangeRateCard";
 import BalanceSnapshot from "@/components/home/BalanceSnapshot";
 import GameStatusCard from "@/components/home/GameStatusCard";
+import TutStatusCard from "@/components/home/TutStatusCard";
 import TripInfoSection from "@/components/home/TripInfoSection";
 
 export default function HomePage() {
@@ -16,7 +17,10 @@ export default function HomePage() {
 
       <ExchangeRateCard rate={rate} updatedAt={updatedAt} unavailable={unavailable} />
       <BalanceSnapshot rate={rate} />
-      <GameStatusCard />
+      <div className="grid grid-cols-2 gap-3">
+        <GameStatusCard />
+        <TutStatusCard />
+      </div>
       <TripInfoSection />
     </div>
   );

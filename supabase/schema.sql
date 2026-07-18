@@ -4,6 +4,7 @@
 
 drop table if exists trip_info_files cascade;
 drop table if exists trip_info cascade;
+drop table if exists tut_results cascade;
 drop table if exists game_results cascade;
 drop table if exists checklist_items cascade;
 drop table if exists place_comments cascade;
@@ -80,6 +81,15 @@ create table game_results (
   unique (game_date, person_id)
 );
 
+create table tut_results (
+  id uuid primary key default gen_random_uuid(),
+  game_date date not null,
+  person_id text not null references people(id),
+  seconds int not null check (seconds > 0),
+  created_at timestamptz not null default now(),
+  unique (game_date, person_id)
+);
+
 create table trip_info (
   id uuid primary key default gen_random_uuid(),
   icon text not null default '📌',
@@ -144,6 +154,7 @@ alter table place_ratings enable row level security;
 alter table place_comments enable row level security;
 alter table checklist_items enable row level security;
 alter table game_results enable row level security;
+alter table tut_results enable row level security;
 alter table trip_info enable row level security;
 alter table trip_info_files enable row level security;
 
@@ -155,6 +166,7 @@ create policy "allow all - place_ratings" on place_ratings for all using (true) 
 create policy "allow all - place_comments" on place_comments for all using (true) with check (true);
 create policy "allow all - checklist_items" on checklist_items for all using (true) with check (true);
 create policy "allow all - game_results" on game_results for all using (true) with check (true);
+create policy "allow all - tut_results" on tut_results for all using (true) with check (true);
 create policy "allow all - trip_info" on trip_info for all using (true) with check (true);
 create policy "allow all - trip_info_files" on trip_info_files for all using (true) with check (true);
 
@@ -165,5 +177,6 @@ alter publication supabase_realtime add table place_ratings;
 alter publication supabase_realtime add table place_comments;
 alter publication supabase_realtime add table checklist_items;
 alter publication supabase_realtime add table game_results;
+alter publication supabase_realtime add table tut_results;
 alter publication supabase_realtime add table trip_info;
 alter publication supabase_realtime add table trip_info_files;
