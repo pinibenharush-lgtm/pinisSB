@@ -1,29 +1,75 @@
-/** Free, no-key representative photo lookup via Wikipedia's search API. */
-async function searchThumbnail(query: string): Promise<string | null> {
+import { supabase } from "./supabase";
+
+/** Finds a Wikipedia page title matching the query, if any. */
+async function searchPageTitle(query: string): Promise<string | null> {
+  const res = await fetch(
+    `https://en.wikipedia.org/w/rest.php/v1/search/page?q=${encodeURIComponent(
+      query,
+    )}&limit=1`,
+    { headers: { Accept: "application/json" } },
+  );
+  if (!res.ok) return null;
+  const data: { pages?: { key?: string; title?: string }[] } = await res.json();
+  const page = data.pages?.[0];
+  return page?.key ?? page?.title ?? null;
+}
+
+/** Gets the full-resolution lead image URL for a Wikipedia page, if any. */
+async function pageOriginalImageUrl(title: string): Promise<string | null> {
+  const res = await fetch(
+    `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`,
+    { headers: { Accept: "application/json" } },
+  );
+  if (!res.ok) return null;
+  const data: {
+    originalimage?: { source?: string };
+    thumbnail?: { source?: string };
+  } = await res.json();
+  return data.originalimage?.source ?? data.thumbnail?.source ?? null;
+}
+
+async function findWikipediaImageUrl(name: string): Promise<string | null> {
+  for (const query of [`${name} Crete`, name]) {
+    try {
+      const title = await searchPageTitle(query);
+      if (!title) continue;
+      const imageUrl = await pageOriginalImageUrl(title);
+      if (imageUrl) return imageUrl;
+    } catch {
+      // try the next query
+    }
+  }
+  return null;
+}
+
+/**
+ * Finds a representative photo for a place on Wikipedia and saves a copy of
+ * it into our own Storage bucket, returning that URL — rather than hotlink
+ * to Wikipedia indefinitely (fragile: URL formats and availability aren't
+ * guaranteed to stay stable).
+ */
+export async function findPlacePhoto(name: string): Promise<string | null> {
+  const imageUrl = await findWikipediaImageUrl(name);
+  if (!imageUrl) return null;
+
   try {
-    const res = await fetch(
-      `https://en.wikipedia.org/w/rest.php/v1/search/page?q=${encodeURIComponent(
-        query,
-      )}&limit=1`,
-      { headers: { Accept: "application/json" } },
-    );
-    if (!res.ok) return null;
+    const imageRes = await fetch(imageUrl);
+    if (!imageRes.ok) return null;
+    const blob = await imageRes.blob();
 
-    const data: { pages?: { thumbnail?: { url?: string } }[] } =
-      await res.json();
-    const thumb = data.pages?.[0]?.thumbnail?.url;
-    if (!thumb) return null;
+    const ext = imageUrl.split(/[#?]/)[0].split(".").pop()?.toLowerCase() || "jpg";
+    const path = `auto-${crypto.randomUUID()}.${ext}`;
 
-    // Use the URL exactly as Wikipedia returns it — do not try to guess a
-    // bigger-size variant by rewriting it, that produces broken image URLs.
-    return thumb.startsWith("//") ? `https:${thumb}` : thumb;
+    const { error: uploadError } = await supabase.storage
+      .from("place-photos")
+      .upload(path, blob, { contentType: blob.type || `image/${ext}` });
+    if (uploadError) return null;
+
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from("place-photos").getPublicUrl(path);
+    return publicUrl;
   } catch {
     return null;
   }
-}
-
-export async function findPlacePhoto(name: string): Promise<string | null> {
-  // Try with "Crete" appended first (disambiguates generic names), then
-  // fall back to the bare name in case that match has no lead image.
-  return (await searchThumbnail(`${name} Crete`)) ?? (await searchThumbnail(name));
 }
