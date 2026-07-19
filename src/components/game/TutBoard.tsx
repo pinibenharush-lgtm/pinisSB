@@ -63,13 +63,29 @@ export default function TutBoard({
     }
   }
 
+  function resetBoard() {
+    if (solvedRef.current) return;
+    setGrid(Array.from({ length: puzzle.size }, () => Array(puzzle.size).fill("empty")));
+  }
+
   const size = puzzle.size;
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <p className="text-sm font-semibold text-stone-500 tabular-nums">
-        ⏱ {formatSeconds(elapsed)}
-      </p>
+      <div className="flex w-full items-center justify-center gap-3">
+        <p className="text-sm font-semibold text-stone-500 tabular-nums">
+          ⏱ {formatSeconds(elapsed)}
+        </p>
+        {!solved && (
+          <button
+            type="button"
+            onClick={resetBoard}
+            className="text-xs font-medium text-aegean-700"
+          >
+            ↺ Reset
+          </button>
+        )}
+      </div>
 
       <div className="w-full overflow-x-auto">
         <div

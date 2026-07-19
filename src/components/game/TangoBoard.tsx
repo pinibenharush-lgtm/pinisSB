@@ -72,6 +72,11 @@ export default function TangoBoard({
     }
   }
 
+  function resetBoard() {
+    if (solvedRef.current) return;
+    setGrid(puzzle.givens.map((row) => row.slice()));
+  }
+
   const size = puzzle.size;
   const trackSizes = Array.from({ length: size * 2 - 1 }, (_, i) =>
     i % 2 === 0 ? `${CELL_PX}px` : `${GAP_PX}px`,
@@ -79,9 +84,20 @@ export default function TangoBoard({
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <p className="text-sm font-semibold text-stone-500 tabular-nums">
-        ⏱ {formatSeconds(elapsed)}
-      </p>
+      <div className="flex w-full items-center justify-center gap-3">
+        <p className="text-sm font-semibold text-stone-500 tabular-nums">
+          ⏱ {formatSeconds(elapsed)}
+        </p>
+        {!solved && (
+          <button
+            type="button"
+            onClick={resetBoard}
+            className="text-xs font-medium text-aegean-700"
+          >
+            ↺ Reset
+          </button>
+        )}
+      </div>
 
       <div className="w-full overflow-x-auto">
       <div
