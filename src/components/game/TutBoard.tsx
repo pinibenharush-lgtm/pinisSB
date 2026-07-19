@@ -63,9 +63,64 @@ export default function TutBoard({
     }
   }
 
+  /** Marks a single cell "x" without cycling — used while dragging across
+   * several cells, so passing over the same cell twice doesn't advance it
+   * further. Only touches cells that are still empty (never overwrites an
+   * "x" or a placed piece). */
+  function paintX(r: number, c: number) {
+    setGrid((g) => {
+      if (g[r][c] !== "empty") return g;
+      const next = g.map((row) => row.slice());
+      next[r][c] = "x";
+      return next;
+    });
+  }
+
   function resetBoard() {
     if (solvedRef.current) return;
     setGrid(Array.from({ length: puzzle.size }, () => Array(puzzle.size).fill("empty")));
+  }
+
+  // Drag-to-mark: press on a cell (normal tap/cycle), then drag across
+  // other cells to mark them "x" in one stroke, instead of tapping each
+  // one individually. Uses elementFromPoint rather than per-cell hover
+  // events, since touch browsers implicitly capture the pointer to the
+  // cell where the drag started and won't fire hover events on the cells
+  // passed over otherwise.
+  const draggingRef = useRef(false);
+  const lastPaintedRef = useRef<string | null>(null);
+
+  function cellAtPoint(x: number, y: number): { r: number; c: number } | null {
+    const el = document.elementFromPoint(x, y) as HTMLElement | null;
+    const cellEl = el?.closest('[data-testid="tut-cell"]') as HTMLElement | null;
+    if (!cellEl) return null;
+    const r = Number(cellEl.dataset.r);
+    const c = Number(cellEl.dataset.c);
+    if (Number.isNaN(r) || Number.isNaN(c)) return null;
+    return { r, c };
+  }
+
+  function handlePointerDown(r: number, c: number, e: React.PointerEvent) {
+    if (solvedRef.current) return;
+    e.preventDefault();
+    draggingRef.current = true;
+    lastPaintedRef.current = `${r},${c}`;
+    cycle(r, c);
+  }
+
+  function handlePointerMove(e: React.PointerEvent) {
+    if (!draggingRef.current || solvedRef.current) return;
+    const cell = cellAtPoint(e.clientX, e.clientY);
+    if (!cell) return;
+    const key = `${cell.r},${cell.c}`;
+    if (key === lastPaintedRef.current) return;
+    lastPaintedRef.current = key;
+    paintX(cell.r, cell.c);
+  }
+
+  function handlePointerUp() {
+    draggingRef.current = false;
+    lastPaintedRef.current = null;
   }
 
   const size = puzzle.size;
@@ -93,7 +148,12 @@ export default function TutBoard({
           style={{
             gridTemplateColumns: `repeat(${size}, ${CELL_PX}px)`,
             gridTemplateRows: `repeat(${size}, ${CELL_PX}px)`,
+            touchAction: "none",
           }}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+          onPointerLeave={handlePointerUp}
         >
           {grid.map((row, r) =>
             row.map((val, c) => {
@@ -110,7 +170,7 @@ export default function TutBoard({
                 <button
                   key={`cell-${r}-${c}`}
                   type="button"
-                  onClick={() => cycle(r, c)}
+                  onPointerDown={(e) => handlePointerDown(r, c, e)}
                   disabled={solved}
                   data-testid="tut-cell"
                   data-r={r}
@@ -146,7 +206,8 @@ export default function TutBoard({
         </p>
       ) : (
         <p className="text-xs text-stone-400">
-          Tap a cell to cycle: empty → ✕ → 🍓 → empty
+          Tap a cell to cycle: empty → ✕ → 🍓 → empty. Drag across cells to
+          mark several ✕ at once.
         </p>
       )}
     </div>
