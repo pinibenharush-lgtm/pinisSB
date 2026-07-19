@@ -5,7 +5,21 @@
 export type TutCellState = "empty" | "x" | "piece";
 export type TutPuzzle = { size: number; regions: number[][] };
 
-const SIZE = 7;
+// Difficulty ramps across the week via grid size — bigger boards mean more
+// rows/columns/regions to juggle. Sunday is the easiest, Saturday the
+// hardest. Index 0 = Sunday ... 6 = Saturday, matching Date#getUTCDay().
+// Capped at 8: sizes of 9+ make finding a uniquely-solvable region layout
+// by random search dramatically slower and less reliable (verified
+// empirically — 9 failed to reach uniqueness within 20000 attempts for
+// ~27% of dates, taking well over a second even when it succeeded).
+const SIZE_BY_WEEKDAY = [5, 5, 6, 6, 7, 7, 8];
+
+/** UTC calendar weekday (0 = Sunday) for a "YYYY-MM-DD" string, independent
+ * of the player's local timezone. */
+function weekdayFromDateStr(dateStr: string): number {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+}
 
 function mulberry32(seed: number) {
   let a = seed;
@@ -137,33 +151,35 @@ function countSolutions(regions: number[][], size: number, limit: number): numbe
 
 /** Same puzzle for everyone on a given calendar day (e.g. "2026-07-14"). */
 export function getDailyTutPuzzle(dateStr: string): TutPuzzle {
+  const weekday = weekdayFromDateStr(dateStr);
+  const size = SIZE_BY_WEEKDAY[weekday];
   const rng = mulberry32(seedFromString(`tut-${dateStr}`));
 
   let best: number[][] | null = null;
-  for (let attempt = 0; attempt < 10000; attempt++) {
-    const solution = generateSolution(rng, SIZE);
+  for (let attempt = 0; attempt < 20000; attempt++) {
+    const solution = generateSolution(rng, size);
     const seeds: [number, number][] = solution.map((c, r) => [r, c]);
-    const regions = growRegions(seeds, rng, SIZE);
-    if (countSolutions(regions, SIZE, 2) === 1) {
+    const regions = growRegions(seeds, rng, size);
+    if (countSolutions(regions, size, 2) === 1) {
       best = regions;
       break;
     }
   }
 
   // Fallback (should be unreachable in practice — verified empirically to
-  // always succeed well within 10000 attempts, usually far fewer, in well
-  // under 100ms): use the last generated layout even if uniqueness wasn't
-  // proven.
+  // always succeed well within 20000 attempts across the full size range
+  // 5-8, usually far fewer): use the last generated layout even if
+  // uniqueness wasn't proven.
   if (!best) {
-    const solution = generateSolution(rng, SIZE);
+    const solution = generateSolution(rng, size);
     best = growRegions(
       solution.map((c, r) => [r, c]),
       rng,
-      SIZE,
+      size,
     );
   }
 
-  return { size: SIZE, regions: best };
+  return { size, regions: best };
 }
 
 export function isValidTutSolution(
