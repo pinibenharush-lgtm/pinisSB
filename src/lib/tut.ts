@@ -12,7 +12,7 @@ export type TutPuzzle = { size: number; regions: number[][] };
 // by random search dramatically slower and less reliable (verified
 // empirically — 9 failed to reach uniqueness within 20000 attempts for
 // ~27% of dates, taking well over a second even when it succeeded).
-const SIZE_BY_WEEKDAY = [5, 5, 6, 6, 7, 7, 8];
+const SIZE_BY_WEEKDAY = [6, 6, 7, 7, 8, 8, 8];
 
 /** UTC calendar weekday (0 = Sunday) for a "YYYY-MM-DD" string, independent
  * of the player's local timezone. */

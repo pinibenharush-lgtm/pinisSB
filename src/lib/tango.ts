@@ -16,8 +16,13 @@ const SIZE = 6;
 // Difficulty ramps across the week: Sunday is the easiest (most givens,
 // fewest constraint links), Saturday the hardest (fewest givens, most
 // links). Index 0 = Sunday ... 6 = Saturday, matching Date#getUTCDay().
-const GIVENS_BY_WEEKDAY = [14, 13, 12, 11, 10, 9, 7];
-const EDGES_BY_WEEKDAY = [5, 6, 6, 7, 7, 8, 9];
+// Roughly half the givens of the original curve, with more = / x links
+// standing in for them — same rules, but far more of the board has to be
+// worked out through chained deduction instead of read straight off a
+// given cell. Verified empirically (280 test dates, 40 per weekday):
+// stays uniquely solvable throughout, generation stays well under 10ms.
+const GIVENS_BY_WEEKDAY = [9, 8, 7, 6, 5, 4, 3];
+const EDGES_BY_WEEKDAY = [9, 10, 11, 12, 13, 14, 15];
 
 /** UTC calendar weekday (0 = Sunday) for a "YYYY-MM-DD" string, independent
  * of the player's local timezone. */
