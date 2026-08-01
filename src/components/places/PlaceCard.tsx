@@ -107,7 +107,7 @@ export default function PlaceCard({
           <img
             src={place.photo_url}
             alt={place.name}
-            className="h-40 w-full object-cover"
+            className="max-h-80 w-full bg-stone-100 object-contain"
             onError={() => {
               setBrokenPhotoUrl(place.photo_url);
               removePhoto();
