@@ -14,6 +14,10 @@ A small shared web app for Pini, Sean & Ori's trip to Crete:
 No accounts or passwords: you just pick your name once on your phone and the
 app remembers you. All three of you see the same live data.
 
+Want to share the places list with someone outside the trip (no app access
+needed)? Send them the `/share/places` link — it's a read-only view of the
+list with photos, notes, ratings and comments, and skips the name picker.
+
 It's built with [Next.js](https://nextjs.org) and [Supabase](https://supabase.com)
 (a free hosted database). You don't need to know how to code to set it up —
 just follow the two sections below once.

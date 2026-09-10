@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Fraunces } from "next/font/google";
 import "./globals.css";
-import { IdentityProvider } from "@/lib/identity";
-import AppShell from "@/components/AppShell";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,9 +35,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-stone-50 text-stone-900">
-        <IdentityProvider>
-          <AppShell>{children}</AppShell>
-        </IdentityProvider>
+        {children}
       </body>
     </html>
   );
